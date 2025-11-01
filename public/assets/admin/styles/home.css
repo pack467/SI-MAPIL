@@ -1,0 +1,481 @@
+/* Import module dasar */
+@import url('base.css');
+@import url('layout.css');
+@import url('sidebar.css');
+
+/* Welcome Section */
+.welcome-section {
+    background: linear-gradient(135deg, #2e7d32 0%, #43a047 50%, #4caf50 100%);
+    color: white;
+    padding: 40px 50px;
+    border-radius: 20px;
+    margin-bottom: 35px;
+    box-shadow: 0 10px 30px rgba(46, 125, 50, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.welcome-section::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 400px;
+    height: 400px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    z-index: 0;
+}
+
+.welcome-section::after {
+    content: '';
+    position: absolute;
+    bottom: -30%;
+    left: -5%;
+    width: 300px;
+    height: 300px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 50%;
+    z-index: 0;
+}
+
+.welcome-section h1 {
+    font-size: 2.2rem;
+    margin-bottom: 15px;
+    font-weight: 700;
+    position: relative;
+    z-index: 1;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.welcome-section p {
+    font-size: 1.05rem;
+    max-width: 900px;
+    opacity: 0.95;
+    line-height: 1.7;
+    position: relative;
+    z-index: 1;
+}
+
+/* Stats Section */
+.stats-section {
+    margin-bottom: 35px;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+}
+
+.stat-card {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fdf8 100%);
+    border-radius: 16px;
+    padding: 30px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 2px solid #e8f5e9;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(46, 125, 50, 0.05) 0%, transparent 100%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 35px rgba(46, 125, 50, 0.2);
+    border-color: #2e7d32;
+}
+
+.stat-card:hover::before {
+    opacity: 1;
+}
+
+.stat-icon {
+    background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+    width: 75px;
+    height: 75px;
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 25px;
+    color: #2e7d32;
+    font-size: 2rem;
+    box-shadow: 0 4px 12px rgba(46, 125, 50, 0.2);
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 1;
+}
+
+.stat-card:hover .stat-icon {
+    transform: scale(1.1) rotate(5deg);
+    box-shadow: 0 6px 20px rgba(46, 125, 50, 0.3);
+}
+
+.stat-info {
+    position: relative;
+    z-index: 1;
+}
+
+.stat-info h3 {
+    font-size: 0.95rem;
+    color: #666;
+    margin-bottom: 8px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #2e7d32 0%, #66bb6a 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Table Section */
+.table-section {
+    background-color: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 2px solid #f0f0f0;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 30px 35px;
+    border-bottom: 2px solid #f0f0f0;
+    background: linear-gradient(135deg, #f8fdf8 0%, #ffffff 100%);
+}
+
+.section-header h2 {
+    color: #2e7d32;
+    font-size: 1.6rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.section-header h2::before {
+    content: '\f0c0';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    font-size: 1.4rem;
+}
+
+.view-all-btn {
+    background: linear-gradient(135deg, #2e7d32 0%, #43a047 100%);
+    color: white;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3);
+}
+
+.view-all-btn:hover {
+    background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(46, 125, 50, 0.4);
+}
+
+.view-all-btn:active {
+    transform: translateY(-1px);
+}
+
+.view-all-btn i {
+    font-size: 1.1rem;
+    transition: transform 0.3s ease;
+}
+
+.view-all-btn:hover i {
+    transform: translateX(5px);
+}
+
+.table-container {
+    overflow-x: visible;
+    padding: 0;
+}
+
+.students-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.students-table thead {
+    background: linear-gradient(135deg, #2e7d32 0%, #388e3c 100%);
+}
+
+.students-table th {
+    padding: 18px 25px;
+    text-align: left;
+    font-weight: 600;
+    color: white;
+    border-bottom: none;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.students-table td {
+    padding: 18px 25px;
+    border-bottom: 1px solid #f0f0f0;
+    color: #333;
+    font-size: 0.95rem;
+}
+
+.students-table tbody tr {
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.students-table tbody tr:hover {
+    background: linear-gradient(to right, #f8fdf8 0%, #ffffff 100%);
+    transform: scale(1.01);
+    box-shadow: 0 2px 8px rgba(46, 125, 50, 0.1);
+}
+
+.students-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Responsive Styles */
+@media (max-width: 992px) {
+    .container {
+        flex-direction: column;
+    }
+    
+    .sidebar {
+        width: 100%;
+        height: auto;
+    }
+
+    .main-content {
+        width: 100%;
+    }
+    
+    .logout-btn {
+        display: none;
+    }
+    
+    .header {
+        flex-direction: column;
+        text-align: center;
+        padding: 20px;
+    }
+    
+    .user-info {
+        margin-top: 15px;
+    }
+    
+    .content {
+        padding: 20px;
+    }
+    
+    .welcome-section {
+        padding: 30px 35px;
+    }
+    
+    .welcome-section h1 {
+        font-size: 1.8rem;
+    }
+
+    /* Enable scrollbar on mobile for table */
+    .table-container {
+        overflow-x: auto;
+    }
+}
+
+@media (max-width: 768px) {
+    .stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+    
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    
+    .view-all-btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .students-table {
+        font-size: 0.85rem;
+        min-width: 900px;
+    }
+    
+    .students-table th, 
+    .students-table td {
+        padding: 14px 18px;
+    }
+    
+    .welcome-section {
+        padding: 25px 30px;
+    }
+    
+    .welcome-section h1 {
+        font-size: 1.6rem;
+    }
+    
+    .stat-card {
+        padding: 25px;
+    }
+    
+    .stat-icon {
+        width: 65px;
+        height: 65px;
+        font-size: 1.8rem;
+    }
+    
+    .stat-number {
+        font-size: 2.2rem;
+    }
+
+    /* Ensure scrollbar visible on mobile */
+    .table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+@media (max-width: 576px) {
+
+    .stat-card {
+        flex-direction: column;
+        text-align: center;
+        padding: 30px 20px;
+    }
+    
+    .stat-icon {
+        margin-right: 0;
+        margin-bottom: 20px;
+    }
+    
+    .welcome-section {
+        padding: 25px;
+    }
+    
+    .welcome-section h1 {
+        font-size: 1.4rem;
+    }
+    
+    .welcome-section p {
+        font-size: 0.95rem;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .section-header h2 {
+        font-size: 1.3rem;
+    }
+
+    .header-title h2 {
+        font-size: 1.5rem;
+    }
+}
+
+/* Animation Classes */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Smooth Scrollbar - Only show on desktop within table container */
+@media (min-width: 993px) {
+    .table-container::-webkit-scrollbar {
+        display: none;
+    }
+    
+    .table-container {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+}
+
+/* Show scrollbar only on mobile for table */
+@media (max-width: 992px) {
+    .table-container::-webkit-scrollbar {
+        height: 8px;
+    }
+    
+    .table-container::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+    
+    .table-container::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #2e7d32 0%, #66bb6a 100%);
+        border-radius: 10px;
+    }
+    
+    .table-container::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
+    }
+}
+
+/* General Scrollbar for page */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #2e7d32 0%, #66bb6a 100%);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
+}

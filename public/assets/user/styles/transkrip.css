@@ -1,0 +1,301 @@
+/* Description Section */
+.description-section {
+    padding: 2rem;
+    margin-bottom: 1rem;
+}
+
+.description-card {
+    background-color: var(--primary-light);
+    padding: 1.5rem;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    border-left: 4px solid var(--primary-color);
+}
+
+.description-card h2 {
+    color: var(--primary-color);
+    font-size: 1.375rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.description-card p {
+    color: var(--text-primary);
+    line-height: 1.6;
+}
+
+/* Student Info Section */
+.student-info-section {
+    padding: 0 2rem 2rem;
+}
+
+.student-info-table-container {
+    background: var(--bg-primary);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    border-left: 4px solid var(--primary-color);
+}
+
+.student-info-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.student-info-table th,
+.student-info-table td {
+    padding: 1rem;
+    text-align: left;
+}
+
+.student-info-table th {
+    background-color: var(--primary-color);
+    color: white;
+    font-weight: 600;
+    width: 180px;
+}
+
+.student-info-table tr:nth-child(even) {
+    background-color: var(--bg-accent);
+}
+
+/* Transcript Section */
+.transcript-section {
+    padding: 0 2rem 2rem;
+}
+
+.transcript-table-container {
+    background: var(--bg-primary);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+    border-left: 4px solid var(--primary-color);
+    overflow-x: auto;
+}
+
+.transcript-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 600px;
+}
+
+.transcript-table thead {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.transcript-table th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.925rem;
+}
+
+.transcript-table tbody tr {
+    border-bottom: 1px solid var(--border-color);
+    transition: background-color 0.2s ease;
+}
+
+.transcript-table tbody tr:hover {
+    background-color: var(--primary-lighter);
+}
+
+.transcript-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.transcript-table td {
+    padding: 1rem;
+    color: var(--text-primary);
+    vertical-align: middle;
+}
+
+/* Academic Performance Section */
+.academic-performance-section {
+    padding: 0 2rem 2rem;
+}
+
+.performance-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.performance-card {
+    background: var(--bg-primary);
+    padding: 1.5rem;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: all 0.2s ease;
+    border-left: 4px solid var(--primary-color);
+}
+
+.performance-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.performance-icon {
+    width: 3rem;
+    height: 3rem;
+    background-color: var(--primary-light);
+    color: var(--primary-color);
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+}
+
+.performance-info h3 {
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.performance-info p {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+/* Grade Explanation Section */
+.grade-explanation-section {
+    padding: 0 2rem 2rem;
+}
+
+.grade-explanation-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    background: var(--bg-primary);
+    padding: 1.5rem;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    border-left: 4px solid var(--primary-color);
+}
+
+.grade-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    background-color: var(--bg-accent);
+    border-radius: var(--radius-md);
+}
+
+.grade-letter {
+    font-weight: 700;
+    font-size: 1.125rem;
+    color: var(--primary-color);
+    min-width: 1.5rem;
+    text-align: center;
+}
+
+.grade-value {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.grade-desc {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+/* Action Buttons Section */
+.action-buttons-section {
+    padding: 0 2rem 2rem;
+    display: flex;
+    justify-content: center;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .description-section,
+    .student-info-section,
+    .transcript-section,
+    .academic-performance-section,
+    .grade-explanation-section,
+    .action-buttons-section {
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+    }
+    
+    .performance-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .grade-explanation-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .student-info-table th {
+        width: 120px;
+    }
+}
+
+@media (max-width: 640px) {
+    .description-card {
+        padding: 1rem;
+    }
+    
+    .description-card h2 {
+        font-size: 1.25rem;
+    }
+    
+    .performance-card {
+        padding: 1rem;
+    }
+    
+    .performance-icon {
+        width: 2.5rem;
+        height: 2.5rem;
+        font-size: 1rem;
+    }
+    
+    .performance-info h3 {
+        font-size: 1.5rem;
+    }
+    
+    .transcript-table th,
+    .transcript-table td {
+        padding: 0.75rem 0.5rem;
+    }
+}
+
+/* Animation for table rows */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.transcript-table tbody tr {
+    animation: fadeIn 0.3s ease-out;
+    animation-fill-mode: both;
+}
+
+.transcript-table tbody tr:nth-child(1) { animation-delay: 0.05s; }
+.transcript-table tbody tr:nth-child(2) { animation-delay: 0.1s; }
+.transcript-table tbody tr:nth-child(3) { animation-delay: 0.15s; }
+.transcript-table tbody tr:nth-child(4) { animation-delay: 0.2s; }
+.transcript-table tbody tr:nth-child(5) { animation-delay: 0.25s; }
+.transcript-table tbody tr:nth-child(6) { animation-delay: 0.3s; }
+.transcript-table tbody tr:nth-child(7) { animation-delay: 0.35s; }
+.transcript-table tbody tr:nth-child(8) { animation-delay: 0.4s; }
+.transcript-table tbody tr:nth-child(9) { animation-delay: 0.45s; }
+.transcript-table tbody tr:nth-child(10) { animation-delay: 0.5s; }

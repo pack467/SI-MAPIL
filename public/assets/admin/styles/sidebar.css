@@ -1,0 +1,304 @@
+/* Enhanced Sidebar Styles */
+.sidebar {
+    width: 280px;
+    background: linear-gradient(135deg, #2e7d32 0%, #388e3c 50%, #1b5e20 100%);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 4px 0 25px rgba(0, 0, 0, 0.15);
+    z-index: 100;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Decorative elements */
+.sidebar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 120px;
+    height: 120px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, transparent 70%);
+    border-radius: 50%;
+    transform: translate(40px, -40px);
+}
+
+.sidebar::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 80px;
+    height: 80px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.05) 0%, transparent 70%);
+    border-radius: 50%;
+    transform: translate(-30px, 30px);
+}
+
+.logo {
+    padding: 30px 25px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    position: relative;
+    z-index: 2;
+}
+
+.logo h1 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    letter-spacing: 0.5px;
+}
+
+.logo p {
+    font-size: 0.95rem;
+    opacity: 0.9;
+    font-weight: 400;
+    letter-spacing: 0.3px;
+}
+
+.logo i {
+    margin-right: 12px;
+    color: #a5d6a7;
+    font-size: 1.8rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.nav-menu {
+    flex: 1;
+    padding: 25px 0;
+    position: relative;
+    z-index: 2;
+}
+
+.nav-menu ul {
+    list-style: none;
+}
+
+.nav-menu li {
+    margin: 8px 15px;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.nav-menu a {
+    display: flex;
+    align-items: center;
+    padding: 18px 20px;
+    color: rgba(255, 255, 255, 0.9);
+    text-decoration: none;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 12px;
+    position: relative;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    backdrop-filter: blur(10px);
+}
+
+.nav-menu a::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 4px;
+    background: linear-gradient(to bottom, #a5d6a7, #81c784);
+    transform: scaleY(0);
+    transition: transform 0.3s ease;
+    border-radius: 0 4px 4px 0;
+}
+
+.nav-menu a:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    transform: translateX(8px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.nav-menu a:hover::before {
+    transform: scaleY(1);
+}
+
+.nav-menu a i {
+    margin-right: 18px;
+    font-size: 1.3rem;
+    width: 24px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.nav-menu a:hover i {
+    color: #a5d6a7;
+    transform: scale(1.1);
+}
+
+.nav-menu li.active a {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    transform: translateX(8px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    font-weight: 600;
+}
+
+.nav-menu li.active a::before {
+    transform: scaleY(1);
+}
+
+.nav-menu li.active a i {
+    color: #a5d6a7;
+    transform: scale(1.1);
+}
+
+/* Hover effect for menu items */
+.nav-menu li:hover {
+    transform: translateY(-2px);
+}
+
+.logout-btn {
+    padding: 25px 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    position: relative;
+    z-index: 2;
+}
+
+.logout-btn a {
+    display: flex;
+    align-items: center;
+    padding: 16px 20px;
+    background: linear-gradient(135deg, #d32f2f 0%, #c62828 100%);
+    color: white;
+    text-decoration: none;
+    border-radius: 12px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    justify-content: center;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 15px rgba(211, 47, 47, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.logout-btn a::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.logout-btn a:hover {
+    background: linear-gradient(135deg, #b71c1c 0%, #a11b1b 100%);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 25px rgba(211, 47, 47, 0.4);
+}
+
+.logout-btn a:hover::before {
+    left: 100%;
+}
+
+.logout-btn i {
+    margin-right: 12px;
+    font-size: 1.1rem;
+    transition: transform 0.3s ease;
+}
+
+.logout-btn a:hover i {
+    transform: rotate(-15deg);
+}
+
+/* Additional animations */
+@keyframes slideInFromLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.nav-menu li {
+    animation: slideInFromLeft 0.6s ease forwards;
+}
+
+.nav-menu li:nth-child(1) { animation-delay: 0.1s; }
+.nav-menu li:nth-child(2) { animation-delay: 0.2s; }
+.nav-menu li:nth-child(3) { animation-delay: 0.3s; }
+.nav-menu li:nth-child(4) { animation-delay: 0.4s; }
+
+/* Scrollbar styling for sidebar if content overflows */
+.sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+/* Responsive enhancements */
+@media (max-width: 992px) {
+    .sidebar {
+        width: 100%;
+        height: auto;
+        background: linear-gradient(90deg, #2e7d32 0%, #388e3c 50%, #1b5e20 100%);
+    }
+    
+    .nav-menu {
+        padding: 15px 0;
+    }
+    
+    .nav-menu ul {
+        display: flex;
+        justify-content: space-around;
+        flex-wrap: wrap;
+    }
+    
+    .nav-menu li {
+        margin: 5px;
+        flex: 1;
+        min-width: 120px;
+    }
+    
+    .nav-menu a {
+        flex-direction: column;
+        padding: 15px 10px;
+        text-align: center;
+        transform: none;
+    }
+    
+    .nav-menu a:hover,
+    .nav-menu li.active a {
+        transform: translateY(-3px);
+    }
+    
+    .nav-menu a i {
+        margin-right: 0;
+        margin-bottom: 8px;
+        font-size: 1.5rem;
+    }
+    
+    .logout-btn {
+        display: none;
+    }
+}

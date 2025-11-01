@@ -1,0 +1,222 @@
+SI_MAPIL/
+│
+├── app/
+│   ├── Config/
+│   │   ├── App.php
+│   │   ├── Autoload.php
+│   │   ├── Boot/
+│   │   ├── Cache.php
+│   │   ├── Constants.php
+│   │   ├── ContentSecurityPolicy.php
+│   │   ├── Cookie.php
+│   │   ├── Database.php
+│   │   ├── DocTypes.php
+│   │   ├── Email.php
+│   │   ├── Encryption.php
+│   │   ├── Events.php
+│   │   ├── Exceptions.php
+│   │   ├── Feature.php
+│   │   ├── Filters.php
+│   │   ├── Format.php
+│   │   ├── Generators.php
+│   │   ├── Honeypot.php
+│   │   ├── Kint.php
+│   │   ├── Logger.php
+│   │   ├── Migrations.php
+│   │   ├── Mimes.php
+│   │   ├── Modules.php
+│   │   ├── Pager.php
+│   │   ├── Paths.php
+│   │   ├── Publisher.php
+│   │   ├── Routing.php
+│   │   ├── Routes.php
+│   │   ├── Security.php
+│   │   ├── Services.php
+│   │   ├── Session.php
+│   │   ├── Toolbar.php
+│   │   ├── UserAgents.php
+│   │   ├── Validation.php
+│   │   └── View.php
+│   │
+│   ├── Controllers/
+│   │   ├── Admin/
+│   │   │   ├── Fuzzy.php
+│   │   │   ├── Home.php
+│   │   │   ├── Mahasiswa.php
+│   │   │   ├── Nilai.php
+│   │   │   └── Penilaian.php
+│   │   ├── User/
+│   │   │   ├── Auth.php
+│   │   │   ├── Home.php
+│   │   │   ├── Khs.php
+│   │   │   ├── Krs.php
+│   │   │   └── Matkul_Check.php
+│   │   ├── Auth.php
+│   │   ├── BaseController.php
+│   │   └── Home.php
+│   │
+│   ├── Database/
+│   │   ├── Migrations/
+│   │   ├── Seeds/
+│   │   ├── Database Admin.txt
+│   │   └── Database User.txt
+│   │
+│   ├── Filters/
+│   │   ├── .gitkeep
+│   │   ├── AuthGuard.php
+│   │   └── StudentAuthGuard.php
+│   │
+│   ├── Helpers/
+│   │   └── (custom helper files)
+│   │
+│   ├── Language/
+│   │   └── en/
+│   │       └── (language files)
+│   │
+│   ├── Libraries/
+│   │   └── (custom library files)
+│   │
+│   ├── Models/
+│   │   ├── .gitkeep
+│   │   ├── AdminModel.php
+│   │   └── MahasiswaModel.php
+│   │
+│   ├── ThirdParty/
+│   │   └── (third party libraries)
+│   │
+│   └── Views/
+│       ├── admin/
+│       │   ├── cek_fuzzy.php
+│       │   ├── cek_nilai.php
+│       │   ├── daftar_mahasiswa.php
+│       │   ├── home_admin.php
+│       │   ├── login_admin.php
+│       │   └── penilaian_mahasiswa.php
+│       ├── errors/
+│       │   ├── html/
+│       │   │   ├── debug.css
+│       │   │   ├── error_404.php
+│       │   │   ├── error_exception.php
+│       │   │   └── production.php
+│       │   └── cli/
+│       ├── layouts/
+│       │   ├── admin/
+│       │   │   ├── _sidebar.php
+│       │   │   └── app.php
+│       │   └── user/
+│       │       ├── _sidebar.php
+│       │       └── app.php
+│       ├── user/
+│       │   ├── home_user.php
+│       │   ├── khs.php
+│       │   ├── krs.php
+│       │   ├── login_user.php
+│       │   ├── Matkul_Check.php
+│       │   ├── transkrip.php
+│       │   └── welcome_message.php
+│       ├── .htaccess
+│       ├── Common.php
+│       ├── index.html
+│       └── welcome_message.php
+│
+├── public/
+│   ├── assets/
+│   │   ├── admin/
+│   │   │   ├── images/
+│   │   │   │   └── (image files)
+│   │   │   ├── script/
+│   │   │   │   ├── cek_nilai.js
+│   │   │   │   ├── fuzzy.js
+│   │   │   │   ├── home.js
+│   │   │   │   ├── login.js
+│   │   │   │   ├── mahasiswa.js
+│   │   │   │   ├── penilaian.js
+│   │   │   │   └── sidebar.js
+│   │   │   └── styles/
+│   │   │       ├── base.css
+│   │   │       ├── cek_nilai.css
+│   │   │       ├── fuzzy.css
+│   │   │       ├── home.css
+│   │   │       ├── layout.css
+│   │   │       ├── login.css
+│   │   │       ├── mahasiswa.css
+│   │   │       ├── penilaian.css
+│   │   │       └── sidebar.css
+│   │   └── user/
+│   │       ├── images/
+│   │       │   └── Logo UINSU.png
+│   │       ├── script/
+│   │       │   ├── home.js
+│   │       │   ├── khs.js
+│   │       │   ├── krs.js
+│   │       │   ├── loading.js
+│   │       │   ├── login.js
+│   │       │   ├── main.js
+│   │       │   ├── MatkuICheck.js
+│   │       │   ├── notifications.js
+│   │       │   ├── sidebar.js
+│   │       │   └── transkrip.js
+│   │       └── styles/
+│   │           ├── base.css
+│   │           ├── components.css
+│   │           ├── home.css
+│   │           ├── khs.css
+│   │           ├── krs.css
+│   │           ├── layout.css
+│   │           ├── loading.css
+│   │           ├── login.css
+│   │           ├── MatkuICheck.css
+│   │           ├── sidebar.css
+│   │           ├── transkrip.css
+│   │           └── variables.css
+│   ├── assets.txt
+│   ├── .htaccess
+│   ├── favicon.ico
+│   ├── index.php
+│   └── robots.txt
+│
+├── tests/
+│   ├── _support/
+│   │   ├── Database/
+│   │   │   ├── Migrations/
+│   │   │   └── Seeds/
+│   │   └── Models/
+│   ├── database/
+│   ├── unit/
+│   └── bootstrap.php
+│
+├── vendor/
+│   ├── autoload.php
+│   ├── bin/
+│   ├── codeigniter4/
+│   │   └── framework/
+│   ├── composer/
+│   ├── laminas/
+│   ├── psr/
+│   └── (other vendor packages)
+│
+├── writable/
+│   ├── cache/
+│   │   └── (cache files)
+│   ├── debugbar/
+│   │   └── (debugbar files)
+│   ├── logs/
+│   │   └── (log files)
+│   ├── session/
+│   │   └── (session files)
+│   ├── uploads/
+│   │   └── (uploaded files)
+│   └── .htaccess
+│
+├── .env
+├── .gitignore
+├── builds
+├── composer.json
+├── composer.lock
+├── installation.txt
+├── LICENSE
+├── phpunit.xml.dist
+├── preload.php
+├── README.md
+├── spark
+└── struktur.txt

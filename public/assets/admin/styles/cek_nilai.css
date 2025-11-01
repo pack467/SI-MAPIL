@@ -1,0 +1,746 @@
+/* Import module dasar */
+@import url('base.css');
+@import url('layout.css');
+@import url('sidebar.css');
+
+/* Content Area */
+.content {
+    padding: 30px 35px;
+}
+
+/* Tab Navigation */
+.tab-navigation {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 30px;
+    background: white;
+    padding: 10px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 18px 30px;
+    border: none;
+    background: transparent;
+    color: #666;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 1rem;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.tab-btn:hover {
+    background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+    color: #2e7d32;
+    transform: translateY(-2px);
+}
+
+.tab-btn.active {
+    background: linear-gradient(135deg, #2e7d32 0%, #43a047 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3);
+}
+
+.tab-btn i {
+    font-size: 1.2rem;
+}
+
+/* Tab Content */
+.tab-content {
+    display: none;
+    animation: fadeInUp 0.5s ease;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Student Info Card */
+.student-info-card {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fdf8 100%);
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.1);
+    border: 3px solid #e8f5e9;
+}
+
+.info-header {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+
+.student-avatar {
+    width: 100px;
+    height: 100px;
+    background: linear-gradient(135deg, #2e7d32 0%, #43a047 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 20px rgba(46, 125, 50, 0.4);
+    flex-shrink: 0;
+}
+
+.student-avatar i {
+    font-size: 3.5rem;
+    color: white;
+}
+
+.student-details h2 {
+    font-size: 1.8rem;
+    color: #1b5e20;
+    margin-bottom: 15px;
+    font-weight: 700;
+}
+
+.detail-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.detail-row .label {
+    font-weight: 600;
+    color: #2e7d32;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.detail-row .label i {
+    font-size: 1rem;
+}
+
+.detail-row .value {
+    color: #555;
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+/* Grades Section */
+.grades-section {
+    display: grid;
+    gap: 25px;
+}
+
+/* Criteria Card */
+.criteria-card {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    border: 2px solid #f0f0f0;
+}
+
+.criteria-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+}
+
+.criteria-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 25px;
+    padding-bottom: 20px;
+    border-bottom: 3px solid #f0f0f0;
+}
+
+.criteria-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+.criteria-icon i {
+    font-size: 2rem;
+    color: white;
+}
+
+.criteria-header h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+/* Robotika Card */
+.robotika-card .criteria-icon {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+}
+
+.robotika-card .criteria-header h3 {
+    color: #ff6b6b;
+}
+
+.robotika-card {
+    border-left: 5px solid #ff6b6b;
+}
+
+/* Matematika Card */
+.matematika-card .criteria-icon {
+    background: linear-gradient(135deg, #4ecdc4 0%, #44a9a0 100%);
+}
+
+.matematika-card .criteria-header h3 {
+    color: #4ecdc4;
+}
+
+.matematika-card {
+    border-left: 5px solid #4ecdc4;
+}
+
+/* Pemrograman Card */
+.pemrograman-card .criteria-icon {
+    background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%);
+}
+
+.pemrograman-card .criteria-header h3 {
+    color: #a29bfe;
+}
+
+.pemrograman-card {
+    border-left: 5px solid #a29bfe;
+}
+
+/* Analisis Card */
+.analisis-card .criteria-icon {
+    background: linear-gradient(135deg, #feca57 0%, #ff9ff3 100%);
+}
+
+.analisis-card .criteria-header h3 {
+    color: #feca57;
+}
+
+.analisis-card {
+    border-left: 5px solid #feca57;
+}
+
+/* Umum Card */
+.umum-card .criteria-icon {
+    background: linear-gradient(135deg, #48dbfb 0%, #0abde3 100%);
+}
+
+.umum-card .criteria-header h3 {
+    color: #48dbfb;
+}
+
+.umum-card {
+    border-left: 5px solid #48dbfb;
+}
+
+/* Umum Semester Container */
+.umum-semester-container {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.semester-section {
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    padding: 25px;
+    border-radius: 15px;
+    border: 2px solid #e9ecef;
+    transition: all 0.3s ease;
+}
+
+.semester-section:hover {
+    border-color: #48dbfb;
+    box-shadow: 0 4px 15px rgba(72, 219, 251, 0.15);
+}
+
+.semester-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #0abde3;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 3px solid #e9ecef;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.semester-title i {
+    font-size: 1.3rem;
+    color: #48dbfb;
+}
+
+/* Courses Grid */
+.courses-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.course-item {
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    padding: 20px;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    border: 2px solid #e9ecef;
+    transition: all 0.3s ease;
+}
+
+.course-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    border-color: #2e7d32;
+}
+
+.course-name {
+    font-weight: 600;
+    color: #333;
+    font-size: 0.95rem;
+    line-height: 1.4;
+}
+
+.course-semester {
+    color: #666;
+    font-weight: 500;
+    font-size: 0.85rem;
+    display: inline-block;
+    margin-left: 5px;
+}
+
+.grade-badge {
+    width: 60px;
+    height: 60px;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: white;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    align-self: center;
+}
+
+/* Grade Colors - Updated */
+.grade-a {
+    background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%);
+}
+
+.grade-b {
+    background: linear-gradient(135deg, #2196f3 0%, #42a5f5 100%);
+}
+
+.grade-c {
+    background: linear-gradient(135deg, #ffd93d 0%, #ffb300 100%);
+}
+
+.grade-d {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+}
+
+.grade-e {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+}
+
+.grade-none {
+    background: linear-gradient(135deg, #9e9e9e 0%, #757575 100%);
+}
+
+.grade-desc {
+    text-align: center;
+    font-size: 0.85rem;
+    color: #666;
+    font-weight: 500;
+}
+
+/* Action Footer */
+.action-footer {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    margin-top: 30px;
+    padding: 25px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.btn-back,
+.btn-print {
+    padding: 15px 30px;
+    border: none;
+    border-radius: 12px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Updated Back Button Color */
+.btn-back {
+    background: linear-gradient(135deg, #6c63ff 0%, #5a52d5 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(108, 99, 255, 0.3);
+}
+
+.btn-back:hover {
+    background: linear-gradient(135deg, #5a52d5 0%, #4a42b8 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(108, 99, 255, 0.4);
+}
+
+.btn-print {
+    background: linear-gradient(135deg, #2e7d32 0%, #43a047 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3);
+}
+
+.btn-print:hover {
+    background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(46, 125, 50, 0.4);
+}
+
+/* Edit Form Styles */
+.edit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.form-criteria-card {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+    border: 2px solid #f0f0f0;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: #333;
+    font-size: 0.95rem;
+}
+
+.form-group label small {
+    color: #666;
+    font-weight: 500;
+    font-size: 0.85rem;
+}
+
+.grade-select {
+    padding: 12px 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.95rem;
+    background: white;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+.grade-select:hover {
+    border-color: #2e7d32;
+}
+
+.grade-select:focus {
+    border-color: #2e7d32;
+    box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+}
+
+/* Form Actions */
+.form-actions {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding: 30px;
+    background: linear-gradient(135deg, #f8fdf8 0%, #ffffff 100%);
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.btn-cancel,
+.btn-save {
+    padding: 15px 40px;
+    border: none;
+    border-radius: 12px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 180px;
+    justify-content: center;
+}
+
+.btn-cancel {
+    background: linear-gradient(135deg, #ef5350 0%, #e53935 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(239, 83, 80, 0.3);
+}
+
+.btn-cancel:hover {
+    background: linear-gradient(135deg, #e53935 0%, #d32f2f 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(239, 83, 80, 0.4);
+}
+
+.btn-save {
+    background: linear-gradient(135deg, #2e7d32 0%, #43a047 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3);
+}
+
+.btn-save:hover {
+    background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(46, 125, 50, 0.4);
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.criteria-card {
+    animation: slideIn 0.5s ease forwards;
+}
+
+.criteria-card:nth-child(1) { animation-delay: 0.1s; }
+.criteria-card:nth-child(2) { animation-delay: 0.2s; }
+.criteria-card:nth-child(3) { animation-delay: 0.3s; }
+.criteria-card:nth-child(4) { animation-delay: 0.4s; }
+.criteria-card:nth-child(5) { animation-delay: 0.5s; }
+
+/* Responsive Styles */
+@media (max-width: 1200px) {
+    .courses-grid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+    
+    .form-grid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+}
+
+@media (max-width: 992px) {
+    .container {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        height: auto;
+    }
+
+    .main-content {
+        width: 100%;
+    }
+
+    .header {
+        flex-direction: column;
+        text-align: center;
+        padding: 20px;
+    }
+    
+    .user-info {
+        margin-top: 15px;
+    }
+    
+    .content {
+        padding: 20px;
+    }
+    
+    .info-header {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .action-footer {
+        flex-direction: column;
+    }
+    
+    .btn-back,
+    .btn-print {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 768px) {
+    .tab-navigation {
+        flex-direction: column;
+    }
+    
+    .tab-btn {
+        width: 100%;
+    }
+    
+    .courses-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .student-info-card {
+        padding: 20px;
+    }
+    
+    .student-avatar {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .student-avatar i {
+        font-size: 2.5rem;
+    }
+    
+    .student-details h2 {
+        font-size: 1.5rem;
+    }
+    
+    .criteria-card {
+        padding: 20px;
+    }
+    
+    .criteria-icon {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .criteria-icon i {
+        font-size: 1.5rem;
+    }
+    
+    .criteria-header h3 {
+        font-size: 1.2rem;
+    }
+    
+    .semester-section {
+        padding: 20px;
+    }
+    
+    .semester-title {
+        font-size: 1.1rem;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .btn-cancel,
+    .btn-save {
+        width: 100%;
+    }
+}
+
+@media (max-width: 576px) {
+    .header-title h2 {
+        font-size: 1.5rem;
+    }
+    
+    .content {
+        padding: 15px;
+    }
+    
+    .grade-badge {
+        width: 50px;
+        height: 50px;
+        font-size: 1.5rem;
+    }
+    
+    .umum-semester-container {
+        gap: 20px;
+    }
+    
+    .semester-section {
+        padding: 15px;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .sidebar,
+    .header,
+    .tab-navigation,
+    .action-footer,
+    .form-actions {
+        display: none;
+    }
+    
+    .main-content {
+        width: 100%;
+    }
+    
+    .criteria-card {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+    
+    .semester-section {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+    
+    .course-item:hover,
+    .semester-section:hover {
+        transform: none;
+        box-shadow: none;
+    }
+}

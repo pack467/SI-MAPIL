@@ -1,0 +1,338 @@
+mysql -u root -p
+
+USE si_mapil;
+
+DROP DATABASE IF EXISTS si_mapil;
+CREATE DATABASE si_mapil CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE si_mapil;
+
+CREATE TABLE admins (
+    id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    last_login DATETIME NULL,
+    INDEX idx_username (username)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Data admin akan diinput manual oleh user
+
+CREATE TABLE mahasiswa (
+    id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    nama VARCHAR(100) NOT NULL,
+    nim VARCHAR(15) NOT NULL UNIQUE,
+    semester TINYINT(2) NOT NULL DEFAULT 1,
+    ipk DECIMAL(3,2) NOT NULL DEFAULT 0.00,
+    total_sks INT(3) NOT NULL DEFAULT 0,
+    email VARCHAR(100) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    password_hash VARCHAR(255) NULL,
+    prodi VARCHAR(100) DEFAULT 'Ilmu Komputer',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_nim (nim),
+    INDEX idx_semester (semester)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Data mahasiswa akan diinput manual oleh user
+
+CREATE TABLE mata_kuliah (
+    id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    kode_mk VARCHAR(20) NOT NULL UNIQUE,
+    nama_mk VARCHAR(150) NOT NULL,
+    semester_mk TINYINT(2) NOT NULL,
+    sks TINYINT(1) NOT NULL DEFAULT 2,
+    kriteria ENUM('robotika', 'matematika', 'pemrograman', 'analisis', 'umum') NULL,
+    dosen VARCHAR(100) DEFAULT 'Belum ditentukan',
+    tipe_mk ENUM('W', 'P') DEFAULT 'W',
+    kelas VARCHAR(5) DEFAULT 'A',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_kode (kode_mk),
+    INDEX idx_kriteria (kriteria),
+    INDEX idx_semester (semester_mk)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Mata Kuliah dengan 4 Kriteria Khusus (tidak ada duplikasi di umum)
+INSERT INTO mata_kuliah (kode_mk, nama_mk, semester_mk, sks, kriteria, dosen, tipe_mk) VALUES
+-- ROBOTIKA
+('01.07.01.216', 'Jaringan Komputer', 3, 2, 'robotika', 'Sriani, S.Kom., M.Kom', 'W'),
+('01.07.01.211', 'Sistem Digital', 2, 2, 'robotika', 'Armansyah, M.Kom', 'W'),
+('01.07.01.220', 'Arsitektur dan Organisasi Komputer', 4, 2, 'robotika', 'Rakhmat Kurniawan R, S.T., M.Kom', 'W'),
+('01.07.01.205', 'Fisika', 1, 2, 'robotika', 'Dr. M. Fakhriza, S.T., M.Kom', 'W'),
+
+-- MATEMATIKA
+('01.07.01.202', 'Kalkulus Dasar', 1, 3, 'matematika', 'Dr. Mhd. Furqan, S.Si., S.H., M.Comp.Sc', 'W'),
+('01.07.01.206', 'Kalkulus Lanjut', 2, 3, 'matematika', 'Dr. Mhd. Furqan, S.Si., S.H., M.Comp.Sc', 'W'),
+('01.07.01.207', 'Matematika Diskrit', 2, 3, 'matematika', 'Armansyah, M.Kom', 'W'),
+('01.07.01.217', 'Aljabar Linear', 3, 3, 'matematika', 'Rakhmat Kurniawan R, S.T., M.Kom', 'W'),
+
+-- PEMROGRAMAN
+('01.07.01.204', 'Algoritma Pemrograman', 1, 2, 'pemrograman', 'Yusuf Ramadhan Nasution, M.Kom', 'W'),
+('01.07.01.218', 'Pemrograman Visual', 4, 2, 'pemrograman', 'Abdul Halim Hasugian, M.Kom', 'W'),
+('01.07.01.213', 'Struktur Data', 3, 3, 'pemrograman', 'Muhammad Ikhsan, S.T., M.Kom', 'W'),
+('01.07.01.222', 'Kecerdasan Buatan', 4, 2, 'pemrograman', 'Dr. M. Fakhriza, S.T., M.Kom', 'W'),
+
+-- ANALISIS
+('01.07.01.209', 'Statistika Dasar', 3, 2, 'analisis', 'Dr. Mhd. Furqan, S.Si., S.H., M.Comp.Sc', 'W'),
+('01.07.01.215', 'Basis Data', 3, 3, 'analisis', 'Muhammad Ikhsan, S.T., M.Kom', 'W'),
+('01.07.01.223', 'Sistem Informasi Manajemen', 3, 2, 'analisis', 'Ilka Zufria, M.Kom', 'W'),
+('01.07.01.252', 'Technopreneur', 4, 2, 'analisis', 'Muhammad Siddik Hasibuan, S.Kom., M.Kom', 'W'),
+
+-- MATA KULIAH UMUM (tanpa duplikasi)
+('01.07.01.001', 'Pancasila', 1, 2, 'umum', 'Tim Dosen', 'W'),
+('01.07.01.003', 'Al-Qur\'an', 1, 2, 'umum', 'Tim Dosen', 'W'),
+('01.07.01.004', 'Pengantar Ilmu Komputer', 1, 2, 'umum', 'Tim Dosen', 'W'),
+('01.07.01.005', 'Ilmu Tauhid', 1, 2, 'umum', 'Tim Dosen', 'W'),
+('01.07.01.012', 'Bahasa Inggris', 1, 2, 'umum', 'Tim Dosen', 'W'),
+('01.07.01.002', 'Kewarganegaraan', 2, 2, 'umum', 'Tim Dosen', 'W'),
+('01.07.01.007', 'Sejarah Peradaban Islam', 2, 2, 'umum', 'Tim Dosen', 'W'),
+('01.07.01.008', 'Fikih/Usul Fikih', 2, 2, 'umum', 'Tim Dosen', 'W'),
+('01.07.01.009', 'Etika Akademik', 2, 2, 'umum', 'Tim Dosen', 'W'),
+('01.07.01.011', 'Bahasa Arab', 3, 2, 'umum', 'Tim Dosen', 'W'),
+('01.07.01.102', 'Mitigasi Bencana', 4, 2, 'umum', 'Tim Dosen', 'W'),
+('01.07.01.253', 'Rekayasa Perangkat Lunak', 4, 2, 'umum', 'Tim Dosen', 'W'),
+('01.07.01.225', 'Sistem Operasi', 4, 3, 'umum', 'Tim Dosen', 'W'),
+('01.07.01.101', 'Sains dan Teknologi Lingkungan', 5, 2, 'umum', 'Rakhmat Kurniawan R, S.T., M.Kom', 'W'),
+('01.07.01.103', 'Metodologi Penelitian', 5, 3, 'umum', 'Muhammad Ikhsan, S.T., M.Kom', 'W'),
+('01.07.01.106', 'Kerja Praktik', 5, 2, 'umum', 'Armansyah, M.Kom', 'W'),
+('01.07.01.229', 'Komunikasi Data', 5, 2, 'umum', 'Sriani, S.Kom., M.Kom', 'W'),
+('01.07.01.230', 'Pemrograman Berorientasi Objek', 5, 2, 'umum', 'Yusuf Ramadhan Nasution, M.Kom', 'W'),
+('01.07.01.232', 'Grafika Komputer', 5, 2, 'umum', 'Tim Dosen', 'W'),
+('01.07.01.234', 'Pemrograman Mobile', 5, 2, 'umum', 'Tim Dosen', 'W'),
+('01.07.01.107', 'KKN', 6, 2, 'umum', 'Tim Dosen', 'W'),
+('01.07.01.227', 'Sains Data', 6, 2, 'umum', 'Tim Dosen', 'W'),
+('01.07.01.236', 'Interaksi Manusia-Komputer', 6, 2, 'umum', 'Tim Dosen', 'W'),
+('01.07.01.237', 'Rekayasa Perangkat Lunak', 6, 2, 'umum', 'Tim Dosen', 'W'),
+('01.07.01.238', 'Pengolahan Citra', 6, 2, 'umum', 'Tim Dosen', 'W'),
+('01.07.01.240', 'Teori Bahasa dan Automata', 6, 3, 'umum', 'Tim Dosen', 'W'),
+('01.07.01.241', 'Pemrograman WEB', 6, 2, 'umum', 'Tim Dosen', 'W'),
+('01.07.01.105', 'Tugas Akhir 1', 7, 2, 'umum', 'Tim Dosen', 'W'),
+('01.07.01.243', 'Visi Komputer', 7, 2, 'umum', 'Dr. M. Fakhriza, S.T., M.Kom', 'W'),
+('01.07.01.245', 'Kriptografi dan Keamanan Informasi', 7, 3, 'umum', 'Muhammad Ikhsan, S.T., M.Kom', 'W'),
+('01.07.01.246', 'Metode Numerik', 7, 2, 'umum', 'Armansyah, M.Kom', 'W'),
+('01.07.01.248', 'Pemodelan dan Simulasi', 7, 3, 'umum', 'Rakhmat Kurniawan R, S.T., M.Kom', 'W'),
+('01.07.01.249', 'Bio Informatika', 7, 2, 'umum', 'Dr. Mhd. Furqan, S.Si., S.H., M.Comp.Sc', 'W'),
+('01.07.01.250', 'Sistem Kompilasi', 7, 2, 'umum', 'Yusuf Ramadhan Nasution, M.Kom', 'W'),
+('01.07.01.261', 'Etika Profesi', 8, 2, 'umum', 'Tim Dosen', 'W'),
+('01.07.01.108', 'Tugas Akhir-2', 8, 4, 'umum', 'Tim Dosen', 'W');
+
+-- Update kelas berdasarkan semester_mk
+UPDATE mata_kuliah SET kelas = 'IK-1' WHERE semester_mk = 1;
+UPDATE mata_kuliah SET kelas = 'IK-2' WHERE semester_mk = 2;
+UPDATE mata_kuliah SET kelas = 'IK-3' WHERE semester_mk = 3;
+UPDATE mata_kuliah SET kelas = 'IK-4' WHERE semester_mk = 4;
+UPDATE mata_kuliah SET kelas = 'IK-5' WHERE semester_mk = 5;
+UPDATE mata_kuliah SET kelas = 'IK-1' WHERE semester_mk >= 6;
+
+-- =========================================================================
+-- TAMBAHAN: INSERT/UPDATE MATA KULIAH PILIHAN DENGAN KODE YANG BENAR
+-- =========================================================================
+
+-- Semester 5: Jaringan Syaraf Tiruan (kode baru)
+INSERT INTO mata_kuliah (kode_mk, nama_mk, semester_mk, sks, kriteria, dosen, tipe_mk, kelas, created_at) 
+VALUES ('01.07.01.254', 'Jaringan Syaraf Tiruan', 5, 3, 'umum', 'Dr. M. Fakhriza, S.T., M.Kom', 'P', 'IK-5', NOW())
+ON DUPLICATE KEY UPDATE 
+    nama_mk = 'Jaringan Syaraf Tiruan',
+    semester_mk = 5,
+    sks = 3,
+    tipe_mk = 'P',
+    kelas = 'IK-5';
+
+-- Semester 6: Mikrokontroler (kode baru)
+INSERT INTO mata_kuliah (kode_mk, nama_mk, semester_mk, sks, kriteria, dosen, tipe_mk, kelas, created_at) 
+VALUES ('01.07.01.260', 'Mikrokontroler', 6, 3, 'umum', 'Armansyah, M.Kom', 'P', 'IK-1', NOW())
+ON DUPLICATE KEY UPDATE 
+    nama_mk = 'Mikrokontroler',
+    semester_mk = 6,
+    sks = 3,
+    tipe_mk = 'P',
+    kelas = 'IK-1';
+
+-- Semester 7: Machine Learning (kode baru)
+INSERT INTO mata_kuliah (kode_mk, nama_mk, semester_mk, sks, kriteria, dosen, tipe_mk, kelas, created_at) 
+VALUES ('01.07.01.258', 'Machine Learning', 7, 3, 'umum', 'Dr. M. Fakhriza, S.T., M.Kom', 'P', 'IK-1', NOW())
+ON DUPLICATE KEY UPDATE 
+    nama_mk = 'Machine Learning',
+    semester_mk = 7,
+    sks = 3,
+    tipe_mk = 'P',
+    kelas = 'IK-1';
+
+-- Semester 7: Logika Fuzzy (kode baru)
+INSERT INTO mata_kuliah (kode_mk, nama_mk, semester_mk, sks, kriteria, dosen, tipe_mk, kelas, created_at) 
+VALUES ('01.07.01.264', 'Logika Fuzzy', 7, 3, 'umum', 'Armansyah, M.Kom', 'P', 'IK-1', NOW())
+ON DUPLICATE KEY UPDATE 
+    nama_mk = 'Logika Fuzzy',
+    semester_mk = 7,
+    sks = 3,
+    tipe_mk = 'P',
+    kelas = 'IK-1';
+
+-- =========================================================================
+
+CREATE TABLE nilai_mahasiswa (
+    id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    mahasiswa_id INT(11) UNSIGNED NOT NULL,
+    kriteria ENUM('robotika', 'matematika', 'pemrograman', 'analisis', 'umum') NULL,
+    kode_mk VARCHAR(20) NOT NULL,
+    nama_mk VARCHAR(150) NOT NULL,
+    nilai_huruf ENUM('A', 'B', 'C', 'D', 'E', '-') DEFAULT '-',
+    nilai_angka DECIMAL(3,2) NULL,
+    deskripsi_nilai VARCHAR(50) DEFAULT 'Belum Dinilai',
+    dibuat_pada DATETIME DEFAULT CURRENT_TIMESTAMP,
+    diperbarui_pada DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (mahasiswa_id) REFERENCES mahasiswa(id) ON DELETE CASCADE,
+    FOREIGN KEY (kode_mk) REFERENCES mata_kuliah(kode_mk) ON DELETE CASCADE,
+    INDEX idx_mahasiswa (mahasiswa_id),
+    INDEX idx_kriteria (kriteria),
+    INDEX idx_kode_mk (kode_mk)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE hasil_fuzzy (
+    id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    mahasiswa_id INT(11) UNSIGNED NOT NULL,
+    kriteria ENUM('robotika', 'matematika', 'pemrograman', 'analisis') NOT NULL,
+    nilai_total DECIMAL(5,2) NOT NULL DEFAULT 0.00,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (mahasiswa_id) REFERENCES mahasiswa(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_mhs_kriteria (mahasiswa_id, kriteria),
+    INDEX idx_mahasiswa (mahasiswa_id),
+    INDEX idx_kriteria (kriteria)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE krs (
+    id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    mahasiswa_id INT(11) UNSIGNED NOT NULL,
+    kode_mk VARCHAR(20) NOT NULL,
+    semester_ambil TINYINT(2) NOT NULL,
+    tahun_akademik VARCHAR(10) NOT NULL,
+    status ENUM('aktif', 'selesai', 'batal') DEFAULT 'aktif',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (mahasiswa_id) REFERENCES mahasiswa(id) ON DELETE CASCADE,
+    FOREIGN KEY (kode_mk) REFERENCES mata_kuliah(kode_mk) ON DELETE CASCADE,
+    INDEX idx_mahasiswa (mahasiswa_id),
+    INDEX idx_status (status),
+    INDEX idx_semester (semester_ambil)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- =========================================================================
+-- TABEL KHS (KARTU HASIL STUDI) - TERINTEGRASI
+-- =========================================================================
+
+-- Buat tabel KHS dengan spesifikasi yang benar
+CREATE TABLE IF NOT EXISTS khs (
+    id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    mahasiswa_id INT(11) UNSIGNED NOT NULL,
+    kode_mk VARCHAR(20) NOT NULL,
+    semester_ambil TINYINT(2) NOT NULL,
+    nilai_huruf ENUM('A', 'B', 'C', 'D', 'E') NOT NULL,
+    nilai_angka DECIMAL(3,2) NOT NULL,
+    bobot_nilai DECIMAL(5,2) NOT NULL,
+    keterangan VARCHAR(100) NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (mahasiswa_id) REFERENCES mahasiswa(id) ON DELETE CASCADE,
+    FOREIGN KEY (kode_mk) REFERENCES mata_kuliah(kode_mk) ON DELETE CASCADE,
+    INDEX idx_mahasiswa (mahasiswa_id),
+    INDEX idx_semester (semester_ambil)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- =========================================================================
+-- TRIGGERS UNTUK KHS
+-- =========================================================================
+
+DELIMITER //
+
+-- Trigger untuk menghitung bobot nilai otomatis saat INSERT
+DROP TRIGGER IF EXISTS before_insert_khs//
+CREATE TRIGGER before_insert_khs
+BEFORE INSERT ON khs
+FOR EACH ROW
+BEGIN
+    DECLARE sks_mk INT;
+    SELECT sks INTO sks_mk FROM mata_kuliah WHERE kode_mk = NEW.kode_mk LIMIT 1;
+    SET NEW.bobot_nilai = sks_mk * NEW.nilai_angka;
+END//
+
+-- Trigger untuk menghitung bobot nilai otomatis saat UPDATE
+DROP TRIGGER IF EXISTS before_update_khs//
+CREATE TRIGGER before_update_khs
+BEFORE UPDATE ON khs
+FOR EACH ROW
+BEGIN
+    DECLARE sks_mk INT;
+    SELECT sks INTO sks_mk FROM mata_kuliah WHERE kode_mk = NEW.kode_mk LIMIT 1;
+    SET NEW.bobot_nilai = sks_mk * NEW.nilai_angka;
+END//
+
+DELIMITER ;
+
+-- =========================================================================
+-- VIEWS
+-- =========================================================================
+
+CREATE OR REPLACE VIEW v_statistik_mahasiswa AS
+SELECT 
+    COUNT(*) as total_mahasiswa,
+    COUNT(DISTINCT semester) as jumlah_semester,
+    AVG(ipk) as rata_rata_ipk,
+    SUM(total_sks) as total_sks_all
+FROM mahasiswa;
+
+CREATE OR REPLACE VIEW v_nilai_lengkap AS
+SELECT 
+    nm.id,
+    nm.mahasiswa_id,
+    m.nama as nama_mahasiswa,
+    m.nim,
+    m.semester as semester_mahasiswa,
+    nm.kriteria,
+    nm.kode_mk,
+    nm.nama_mk,
+    mk.semester_mk,
+    mk.sks,
+    nm.nilai_huruf,
+    nm.nilai_angka,
+    nm.deskripsi_nilai
+FROM nilai_mahasiswa nm
+JOIN mahasiswa m ON m.id = nm.mahasiswa_id
+JOIN mata_kuliah mk ON mk.kode_mk = nm.kode_mk;
+
+CREATE OR REPLACE VIEW v_jumlah_per_kriteria AS
+SELECT 
+    kriteria,
+    COUNT(*) as jumlah_matkul
+FROM mata_kuliah
+WHERE kriteria IN ('robotika', 'matematika', 'pemrograman', 'analisis')
+GROUP BY kriteria;
+
+-- =========================================================================
+-- VERIFIKASI DATA MATA KULIAH PILIHAN YANG BARU DITAMBAHKAN
+-- =========================================================================
+
+-- Verifikasi mata kuliah pilihan yang baru ditambahkan
+SELECT kode_mk, nama_mk, semester_mk, sks, tipe_mk, kelas, dosen
+FROM mata_kuliah
+WHERE kode_mk IN ('01.07.01.254', '01.07.01.260', '01.07.01.258', '01.07.01.264')
+ORDER BY semester_mk, kode_mk;
+
+-- Verifikasi perubahan kelas
+SELECT semester_mk, kelas, COUNT(*) as jumlah
+FROM mata_kuliah
+GROUP BY semester_mk, kelas
+ORDER BY semester_mk;
+
+-- Tampilkan semua mata kuliah dengan kelas baru
+SELECT kode_mk, nama_mk, semester_mk, kelas, dosen, tipe_mk
+FROM mata_kuliah
+ORDER BY semester_mk, kode_mk;
+
+-- =========================================================================
+-- VERIFIKASI TABEL KHS
+-- =========================================================================
+
+-- Verifikasi tabel KHS berhasil dibuat
+SHOW TABLES LIKE 'khs';
+
+-- Cek jumlah record di tabel KHS
+SELECT COUNT(*) as total_records FROM khs;

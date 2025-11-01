@@ -1,0 +1,274 @@
+/* KHS Description Section */
+.khs-description-section {
+    padding: 2rem;
+    margin-bottom: 1rem;
+}
+
+.khs-description-card {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 2rem;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-lg);
+}
+
+.khs-description-card h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.khs-description-card p {
+    line-height: 1.6;
+    opacity: 0.95;
+}
+
+/* Semester Selector Section */
+.semester-selector-section {
+    padding: 0 2rem 2rem;
+}
+
+.semester-selector-card {
+    background: var(--bg-primary);
+    padding: 2rem;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-lg);
+    border-left: 4px solid var(--primary-color);
+}
+
+.semester-form {
+    display: flex;
+    align-items: end;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.semester-form .form-group {
+    flex: 1;
+    min-width: 250px;
+}
+
+.semester-form label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.semester-form select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-size: 1rem;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.semester-form select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+/* Student Info Section */
+.student-info-section {
+    padding: 0 2rem 2rem;
+}
+
+.student-info-table-container {
+    background: var(--bg-primary);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    border-left: 4px solid var(--primary-color);
+}
+
+.student-info-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.student-info-table th,
+.student-info-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.student-info-table th {
+    background-color: var(--bg-accent);
+    font-weight: 600;
+    color: var(--text-primary);
+    width: 20%;
+}
+
+.student-info-table td {
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.student-info-table tr:last-child th,
+.student-info-table tr:last-child td {
+    border-bottom: none;
+}
+
+/* KHS Table Section */
+.khs-table-section {
+    padding: 0 2rem 2rem;
+}
+
+.khs-table-container {
+    background: var(--bg-primary);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+    border-left: 4px solid var(--primary-color);
+}
+
+.khs-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.khs-table thead {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.khs-table th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.925rem;
+    letter-spacing: 0.025em;
+}
+
+.khs-table tbody tr {
+    border-bottom: 1px solid var(--border-color);
+    transition: background-color 0.2s ease;
+}
+
+.khs-table tbody tr:hover {
+    background-color: var(--primary-lighter);
+}
+
+.khs-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.khs-table td {
+    padding: 1rem;
+    color: var(--text-primary);
+    vertical-align: middle;
+}
+
+/* KHS Summary */
+.khs-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.summary-item {
+    background: var(--bg-primary);
+    padding: 1.5rem;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.summary-label {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.summary-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+/* Action Buttons */
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .khs-description-section,
+    .semester-selector-section,
+    .student-info-section,
+    .khs-table-section {
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+    }
+    
+    .semester-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .semester-form .form-group {
+        min-width: auto;
+    }
+    
+    .student-info-table th,
+    .student-info-table td {
+        padding: 0.75rem;
+    }
+    
+    .khs-table {
+        font-size: 0.875rem;
+    }
+    
+    .khs-table th,
+    .khs-table td {
+        padding: 0.75rem 0.5rem;
+    }
+    
+    .khs-summary {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .khs-description-card {
+        padding: 1.5rem;
+    }
+    
+    .khs-description-card h2 {
+        font-size: 1.25rem;
+    }
+    
+    .student-info-table {
+        display: block;
+        overflow-x: auto;
+    }
+    
+    .khs-table-container {
+        overflow-x: auto;
+    }
+    
+    .khs-table {
+        min-width: 600px;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+    }
+}

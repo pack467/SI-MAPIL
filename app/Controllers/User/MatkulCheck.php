@@ -484,6 +484,9 @@ class MatkulCheck extends BaseController
         }
     }
 
+    /**
+     * Generate semua 81 rules untuk Semester 5-6
+     */
     private function generateAllRulesSemester56(array $mu): array
     {
         $rules = [];
@@ -508,8 +511,8 @@ class MatkulCheck extends BaseController
                         
                         list($jstLabel, $mikoLabel) = $this->determineOutputSem56($rob, $mat, $prog, $anal);
                         
-                        $z_jst = $this->inferByLabel($jstLabel, $alpha);
-                        $z_miko = $this->inferByLabel($mikoLabel, $alpha);
+                        $z_jst = $this->inferTsukamoto($jstLabel, $alpha);
+                        $z_miko = $this->inferTsukamoto($mikoLabel, $alpha);
                         
                         $rules[] = [
                             'id' => 'R' . $ruleCount,
@@ -545,6 +548,9 @@ class MatkulCheck extends BaseController
         return $rules;
     }
 
+    /**
+     * Generate semua 81 rules untuk Semester 7+
+     */
     private function generateAllRulesSemester7Plus(array $mu): array
     {
         $rules = [];
@@ -569,8 +575,8 @@ class MatkulCheck extends BaseController
                         
                         list($mlLabel, $lfLabel) = $this->determineOutputSem7Plus($rob, $mat, $prog, $anal);
                         
-                        $z_ml = $this->inferByLabel($mlLabel, $alpha);
-                        $z_lf = $this->inferByLabel($lfLabel, $alpha);
+                        $z_ml = $this->inferTsukamoto($mlLabel, $alpha);
+                        $z_lf = $this->inferTsukamoto($lfLabel, $alpha);
                         
                         $rules[] = [
                             'id' => 'R' . $ruleCount,
@@ -606,6 +612,9 @@ class MatkulCheck extends BaseController
         return $rules;
     }
 
+    /**
+     * Menentukan output label untuk Semester 5-6
+     */
     private function determineOutputSem56($rob, $mat, $prog, $anal): array
     {
         $robScore = $this->setToScore($rob);
@@ -613,12 +622,18 @@ class MatkulCheck extends BaseController
         $progScore = $this->setToScore($prog);
         $analScore = $this->setToScore($anal);
         
+        // JST: Pemrograman (40%), Matematika (30%), Analisis (20%), Robotika (10%)
         $jstScore = ($progScore * 0.40) + ($matScore * 0.30) + ($analScore * 0.20) + ($robScore * 0.10);
+        
+        // Mikrokontroler: Robotika (40%), Analisis (30%), Pemrograman (20%), Matematika (10%)
         $mikoScore = ($robScore * 0.40) + ($analScore * 0.30) + ($progScore * 0.20) + ($matScore * 0.10);
         
         return [$this->scoreToLabel($jstScore), $this->scoreToLabel($mikoScore)];
     }
 
+    /**
+     * Menentukan output label untuk Semester 7+
+     */
     private function determineOutputSem7Plus($rob, $mat, $prog, $anal): array
     {
         $robScore = $this->setToScore($rob);
@@ -626,12 +641,18 @@ class MatkulCheck extends BaseController
         $progScore = $this->setToScore($prog);
         $analScore = $this->setToScore($anal);
         
+        // Machine Learning: Matematika (40%), Analisis (30%), Pemrograman (20%), Robotika (10%)
         $mlScore = ($matScore * 0.40) + ($analScore * 0.30) + ($progScore * 0.20) + ($robScore * 0.10);
+        
+        // Logika Fuzzy: Analisis (40%), Matematika (30%), Robotika (20%), Pemrograman (10%)
         $lfScore = ($analScore * 0.40) + ($matScore * 0.30) + ($robScore * 0.20) + ($progScore * 0.10);
         
         return [$this->scoreToLabel($mlScore), $this->scoreToLabel($lfScore)];
     }
 
+    /**
+     * Konversi fuzzy set ke skor numerik
+     */
     private function setToScore($set): float
     {
         return match($set) {
@@ -642,6 +663,9 @@ class MatkulCheck extends BaseController
         };
     }
 
+    /**
+     * Konversi skor ke label output
+     */
     private function scoreToLabel($score): string
     {
         if ($score >= 2.5) return 'Sangat Cocok';
@@ -650,6 +674,81 @@ class MatkulCheck extends BaseController
         return 'Kurang Cocok';
     }
 
+    /**
+     * METODE INVERSI TSUKAMOTO - FUNGSI KEANGGOTAAN MONOTON
+     * 
+     * Rumus: Z = y_pusat + α(y_max - y_min)
+     * 
+     * Parameter berdasarkan spesifikasi:
+     * 1) Kurang Cocok: fungsi turun [40, 0] → y_pusat=20, range=40
+     * 2) Cukup Cocok: fungsi naik [30, 70] → y_pusat=50, range=40
+     * 3) Cocok: fungsi naik [50, 90] → y_pusat=70, range=40
+     * 4) Sangat Cocok: fungsi naik [70, 100] → y_pusat=85, range=30
+     */
+    private function inferTsukamoto($label, $alpha): array
+    {
+        switch ($label) {
+            case 'Kurang Cocok':
+                // Fungsi turun: Z = y_max - α(y_max - y_min)
+                // Range [0, 40], pusat di 20
+                $y_min = 0.0;
+                $y_max = 40.0;
+                $y_pusat = 20.0;
+                $z = $y_max - ($alpha * ($y_max - $y_min));
+                $formula = "{$this->fmt($y_max)} - ({$this->fmt($alpha)} × ({$this->fmt($y_max)} - {$this->fmt($y_min)}))";
+                break;
+                
+            case 'Cukup Cocok':
+                // Fungsi naik: Z = y_min + α(y_max - y_min)
+                // Range [30, 70], pusat di 50
+                $y_min = 30.0;
+                $y_max = 70.0;
+                $y_pusat = 50.0;
+                $z = $y_min + ($alpha * ($y_max - $y_min));
+                $formula = "{$this->fmt($y_min)} + ({$this->fmt($alpha)} × ({$this->fmt($y_max)} - {$this->fmt($y_min)}))";
+                break;
+                
+            case 'Cocok':
+                // Fungsi naik: Z = y_min + α(y_max - y_min)
+                // Range [50, 90], pusat di 70
+                $y_min = 50.0;
+                $y_max = 90.0;
+                $y_pusat = 70.0;
+                $z = $y_min + ($alpha * ($y_max - $y_min));
+                $formula = "{$this->fmt($y_min)} + ({$this->fmt($alpha)} × ({$this->fmt($y_max)} - {$this->fmt($y_min)}))";
+                break;
+                
+            case 'Sangat Cocok':
+                // Fungsi naik: Z = y_min + α(y_max - y_min)
+                // Range [70, 100], pusat di 85
+                $y_min = 70.0;
+                $y_max = 100.0;
+                $y_pusat = 85.0;
+                $z = $y_min + ($alpha * ($y_max - $y_min));
+                $formula = "{$this->fmt($y_min)} + ({$this->fmt($alpha)} × ({$this->fmt($y_max)} - {$this->fmt($y_min)}))";
+                break;
+                
+            default:
+                $y_min = 0.0;
+                $y_max = 40.0;
+                $y_pusat = 20.0;
+                $z = $y_max - ($alpha * ($y_max - $y_min));
+                $formula = "{$this->fmt($y_max)} - ({$this->fmt($alpha)} × ({$this->fmt($y_max)} - {$this->fmt($y_min)}))";
+                break;
+        }
+        
+        return [
+            'z' => $z,
+            'formula' => $formula,
+            'y_min' => $y_min,
+            'y_max' => $y_max,
+            'y_pusat' => $y_pusat
+        ];
+    }
+
+    /**
+     * Helper: CSS class untuk fuzzy set
+     */
     private function getFuzzyClass($set): string
     {
         return match($set) {
@@ -660,45 +759,25 @@ class MatkulCheck extends BaseController
         };
     }
 
+    /**
+     * Helper: CSS class untuk output label
+     */
     private function getOutputClass($label): string
     {
         return match($label) {
             'Sangat Cocok' => 'high',
-            'Cocok' => 'medium',
+            'Cocok' => 'medium-high',
             'Cukup Cocok' => 'medium',
             'Kurang Cocok' => 'low',
             default => 'low'
         };
     }
 
-    private function inferByLabel($label, $alpha): array
-    {
-        switch ($label) {
-            case 'Sangat Cocok':
-                $base = 80.0;
-                $range = 20.0;
-                break;
-            case 'Cocok':
-                $base = 60.0;
-                $range = 20.0;
-                break;
-            case 'Cukup Cocok':
-                $base = 40.0;
-                $range = 20.0;
-                break;
-            case 'Kurang Cocok':
-            default:
-                $base = 0.0;
-                $range = 40.0;
-                break;
-        }
-        
-        $z = $base + ($alpha * $range);
-        $formula = "{$this->fmt($base)} + ({$this->fmt($alpha)} × {$this->fmt($range)})";
-        
-        return ['z' => $z, 'formula' => $formula];
-    }
-
+    /**
+     * Fungsi keanggotaan trapesium untuk fuzzifikasi
+     * Input: nilai crisp (0-100)
+     * Output: derajat keanggotaan untuk 3 himpunan fuzzy
+     */
     private function membershipAll(float $x): array
     {
         return [
@@ -708,6 +787,13 @@ class MatkulCheck extends BaseController
         ];
     }
 
+    /**
+     * Fungsi trapesium
+     * Parameter: [a, b, c, d]
+     * - [a, b]: sisi naik
+     * - [b, c]: puncak (μ = 1)
+     * - [c, d]: sisi turun
+     */
     private function trap(float $x, float $a, float $b, float $c, float $d): float
     {
         if ($x <= $a || $x >= $d) return 0.0;
@@ -717,11 +803,17 @@ class MatkulCheck extends BaseController
         return 0.0;
     }
 
+    /**
+     * Format number dengan 2 desimal
+     */
     private function fmt($x, int $n = 2): string
     {
         return number_format((float)$x, $n, '.', '');
     }
 
+    /**
+     * Konversi nilai huruf ke angka (skala 0-4)
+     */
     private function hurufToAngka($huruf): float
     {
         return match(strtoupper($huruf ?? '')) {

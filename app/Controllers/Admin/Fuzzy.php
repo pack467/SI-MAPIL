@@ -275,12 +275,11 @@ class Fuzzy extends BaseController
                         }
                         
                         // Tentukan output berdasarkan prioritas
-                        // JST: Pemrograman > Matematika > Analisis > Robotika
-                        // Mikrokontroler: Robotika > Analisis > Pemrograman > Matematika
                         list($jstLabel, $mikoLabel) = $this->determineOutputSem56($rob, $mat, $prog, $anal);
                         
-                        $z_jst = $this->inferByLabel($jstLabel, $alpha);
-                        $z_miko = $this->inferByLabel($mikoLabel, $alpha);
+                        // Gunakan metode inversi Tsukamoto yang benar
+                        $z_jst = $this->inferTsukamoto($jstLabel, $alpha);
+                        $z_miko = $this->inferTsukamoto($mikoLabel, $alpha);
                         
                         $rules[] = [
                             'id' => 'R' . $ruleCount,
@@ -345,12 +344,11 @@ class Fuzzy extends BaseController
                         }
                         
                         // Tentukan output berdasarkan prioritas
-                        // ML: Matematika > Analisis > Robotika > Pemrograman
-                        // Logika Fuzzy: Analisis > Robotika > Matematika > Pemrograman
                         list($mlLabel, $lfLabel) = $this->determineOutputSem7Plus($rob, $mat, $prog, $anal);
                         
-                        $z_ml = $this->inferByLabel($mlLabel, $alpha);
-                        $z_lf = $this->inferByLabel($lfLabel, $alpha);
+                        // Gunakan metode inversi Tsukamoto yang benar
+                        $z_ml = $this->inferTsukamoto($mlLabel, $alpha);
+                        $z_lf = $this->inferTsukamoto($lfLabel, $alpha);
                         
                         $rules[] = [
                             'id' => 'R' . $ruleCount,
@@ -404,10 +402,7 @@ class Fuzzy extends BaseController
         // Hitung skor untuk Mikrokontroler (Prioritas: Robotika > Analisis > Pemrograman > Matematika)
         $mikoScore = ($robScore * 0.40) + ($analScore * 0.30) + ($progScore * 0.20) + ($matScore * 0.10);
         
-        $jstLabel = $this->scoreToLabel($jstScore);
-        $mikoLabel = $this->scoreToLabel($mikoScore);
-        
-        return [$jstLabel, $mikoLabel];
+        return [$this->scoreToLabel($jstScore), $this->scoreToLabel($mikoScore)];
     }
 
     /**
@@ -428,10 +423,7 @@ class Fuzzy extends BaseController
         // Hitung skor untuk Logika Fuzzy (Prioritas: Analisis > Matematika > Robotika > Pemrograman)
         $lfScore = ($analScore * 0.40) + ($matScore * 0.30) + ($robScore * 0.20) + ($progScore * 0.10);
         
-        $mlLabel = $this->scoreToLabel($mlScore);
-        $lfLabel = $this->scoreToLabel($lfScore);
-        
-        return [$mlLabel, $lfLabel];
+        return [$this->scoreToLabel($mlScore), $this->scoreToLabel($lfScore)];
     }
 
     /**
@@ -459,6 +451,81 @@ class Fuzzy extends BaseController
     }
 
     /**
+     * METODE INVERSI TSUKAMOTO - FUNGSI KEANGGOTAAN MONOTON
+     * 
+     * Rumus Inversi Fungsi Keanggotaan:
+     * - Fungsi Naik: Z = y_min + α(y_max - y_min)
+     * - Fungsi Turun: Z = y_max - α(y_max - y_min)
+     * 
+     * Parameter berdasarkan spesifikasi yang telah diperbaiki:
+     * 1) Kurang Cocok: fungsi turun [40, 0] → range [0-40]
+     * 2) Cukup Cocok: fungsi naik [30, 70] → range [30-70]
+     * 3) Cocok: fungsi naik [50, 90] → range [50-90]
+     * 4) Sangat Cocok: fungsi naik [70, 100] → range [70-100]
+     */
+    private function inferTsukamoto($label, $alpha): array
+    {
+        switch ($label) {
+            case 'Kurang Cocok':
+                // Fungsi TURUN: Z = y_max - α(y_max - y_min)
+                // Range [0, 40], semakin tinggi α, semakin rendah Z
+                $y_min = 0.0;
+                $y_max = 40.0;
+                $y_pusat = 20.0;
+                $z = $y_max - ($alpha * ($y_max - $y_min));
+                $formula = "{$this->fmt($y_max)} - ({$this->fmt($alpha)} × ({$this->fmt($y_max)} - {$this->fmt($y_min)}))";
+                break;
+                
+            case 'Cukup Cocok':
+                // Fungsi NAIK: Z = y_min + α(y_max - y_min)
+                // Range [30, 70], semakin tinggi α, semakin tinggi Z
+                $y_min = 30.0;
+                $y_max = 70.0;
+                $y_pusat = 50.0;
+                $z = $y_min + ($alpha * ($y_max - $y_min));
+                $formula = "{$this->fmt($y_min)} + ({$this->fmt($alpha)} × ({$this->fmt($y_max)} - {$this->fmt($y_min)}))";
+                break;
+                
+            case 'Cocok':
+                // Fungsi NAIK: Z = y_min + α(y_max - y_min)
+                // Range [50, 90], semakin tinggi α, semakin tinggi Z
+                $y_min = 50.0;
+                $y_max = 90.0;
+                $y_pusat = 70.0;
+                $z = $y_min + ($alpha * ($y_max - $y_min));
+                $formula = "{$this->fmt($y_min)} + ({$this->fmt($alpha)} × ({$this->fmt($y_max)} - {$this->fmt($y_min)}))";
+                break;
+                
+            case 'Sangat Cocok':
+                // Fungsi NAIK: Z = y_min + α(y_max - y_min)
+                // Range [70, 100], semakin tinggi α, semakin tinggi Z
+                $y_min = 70.0;
+                $y_max = 100.0;
+                $y_pusat = 85.0;
+                $z = $y_min + ($alpha * ($y_max - $y_min));
+                $formula = "{$this->fmt($y_min)} + ({$this->fmt($alpha)} × ({$this->fmt($y_max)} - {$this->fmt($y_min)}))";
+                break;
+                
+            default:
+                // Default ke Kurang Cocok
+                $y_min = 0.0;
+                $y_max = 40.0;
+                $y_pusat = 20.0;
+                $z = $y_max - ($alpha * ($y_max - $y_min));
+                $formula = "{$this->fmt($y_max)} - ({$this->fmt($alpha)} × ({$this->fmt($y_max)} - {$this->fmt($y_min)}))";
+                break;
+        }
+        
+        return [
+            'z' => $z,
+            'formula' => $formula,
+            'y_min' => $y_min,
+            'y_max' => $y_max,
+            'y_pusat' => $y_pusat
+        ];
+    }
+
+    /**
      * Get CSS class for fuzzy value
      */
     private function getFuzzyClass($set): string
@@ -478,53 +545,18 @@ class Fuzzy extends BaseController
     {
         return match($label) {
             'Sangat Cocok' => 'high',
-            'Cocok' => 'medium',
+            'Cocok' => 'medium-high',
             'Cukup Cocok' => 'medium',
             'Kurang Cocok' => 'low',
             default => 'low'
         };
     }
 
-    /**
-     * Inferensi berdasarkan label dengan formula Tsukamoto
-     * Menggunakan fungsi linear untuk setiap kategori
-     */
-    private function inferByLabel($label, $alpha): array
-    {
-        switch ($label) {
-            case 'Sangat Cocok':
-                // Range: 80-100
-                $base = 80.0;
-                $range = 20.0;
-                break;
-            case 'Cocok':
-                // Range: 60-80
-                $base = 60.0;
-                $range = 20.0;
-                break;
-            case 'Cukup Cocok':
-                // Range: 40-60
-                $base = 40.0;
-                $range = 20.0;
-                break;
-            case 'Kurang Cocok':
-            default:
-                // Range: 0-40
-                $base = 0.0;
-                $range = 40.0;
-                break;
-        }
-        
-        $z = $base + ($alpha * $range);
-        $formula = "{$this->fmt($base)} + ({$this->fmt($alpha)} × {$this->fmt($range)})";
-        
-        return ['z' => $z, 'formula' => $formula];
-    }
-
     // ============== HELPER FUNCTIONS ==============
 
     /**
      * Hitung derajat keanggotaan untuk semua himpunan fuzzy
+     * Menggunakan fungsi trapesoid untuk 3 kategori: lemah, lumayan, kuat
      */
     private function membershipAll(float $x): array
     {
@@ -537,6 +569,10 @@ class Fuzzy extends BaseController
 
     /**
      * Fungsi keanggotaan trapesium
+     * Parameter: [a, b, c, d]
+     * - [a, b]: sisi naik
+     * - [b, c]: puncak (μ = 1)
+     * - [c, d]: sisi turun
      */
     private function trap(float $x, float $a, float $b, float $c, float $d): float
     {
@@ -556,7 +592,7 @@ class Fuzzy extends BaseController
     }
 
     /**
-     * Konversi nilai huruf ke angka
+     * Konversi nilai huruf ke angka (skala 0-4)
      */
     private function hurufToAngka($huruf): float
     {

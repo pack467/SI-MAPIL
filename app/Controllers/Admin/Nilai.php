@@ -12,6 +12,9 @@ class Nilai extends BaseController
      */
     public function detail()
     {
+        $this->setNoCacheHeaders();
+        $this->response->setHeader('Content-Type', 'application/json');
+        
         $db = Database::connect();
         $mahasiswaId = (int) ($this->request->getGet('mahasiswa_id') ?? 0);
         
@@ -30,7 +33,6 @@ class Nilai extends BaseController
                 ->setJSON(['error' => true, 'message' => 'Mahasiswa tidak ditemukan.']);
         }
 
-        // Ambil seluruh MK + nilai mahasiswa
         $rows = $db->table('mata_kuliah mk')
             ->select("
                 mk.id,
@@ -74,7 +76,6 @@ class Nilai extends BaseController
             }
         }
 
-        // Urutkan kriteria
         $order = ['Robotika', 'Matematika', 'Pemrograman', 'Analisis'];
         $sorted = [];
         foreach ($order as $k) {
@@ -91,6 +92,7 @@ class Nilai extends BaseController
             'semester'         => (int) $mhs['semester'],
             'matkulByKriteria' => $sorted,
             'nilaiByMatkul'    => $nilaiByMatkul,
+            'timestamp'        => time(),
         ]);
     }
 
@@ -99,6 +101,9 @@ class Nilai extends BaseController
      */
     public function matkul()
     {
+        $this->setNoCacheHeaders();
+        $this->response->setHeader('Content-Type', 'application/json');
+        
         $db = Database::connect();
 
         $rows = $db->table('mata_kuliah')
@@ -127,17 +132,20 @@ class Nilai extends BaseController
             if (!isset($sorted[$k])) $sorted[$k] = $v;
         }
 
-        return $this->response->setJSON(['matkulByKriteria' => $sorted]);
+        return $this->response->setJSON([
+            'matkulByKriteria' => $sorted,
+            'timestamp' => time()
+        ]);
     }
 
     /**
      * POST /admin/nilai/simpan
-     * Body: mahasiswa_id, nilai[<mk_id>]=<A|B|C|D|E|->
-     * 
-     * OTOMATIS HITUNG NILAI TOTAL PER KRITERIA DAN SIMPAN KE hasil_fuzzy
      */
     public function simpan()
     {
+        $this->setNoCacheHeaders();
+        $this->response->setHeader('Content-Type', 'application/json');
+        
         $db = Database::connect();
 
         $mahasiswaId = (int) ($this->request->getPost('mahasiswa_id') ?? 0);
@@ -146,6 +154,12 @@ class Nilai extends BaseController
         if ($mahasiswaId <= 0) {
             return $this->response->setStatusCode(400)
                 ->setJSON(['error' => true, 'message' => 'mahasiswa_id wajib.']);
+        }
+
+        $mahasiswa = $db->table('mahasiswa')->where('id', $mahasiswaId)->get()->getRowArray();
+        if (!$mahasiswa) {
+            return $this->response->setStatusCode(404)
+                ->setJSON(['error' => true, 'message' => 'Mahasiswa tidak ditemukan.']);
         }
 
         $mapAngka = ['A' => 4, 'B' => 3, 'C' => 2, 'D' => 1, 'E' => 0, '-' => null];
@@ -158,67 +172,100 @@ class Nilai extends BaseController
             '-' => 'Belum Dinilai',
         ];
 
-        // ========== 1. SIMPAN NILAI PER-MK ==========
-        foreach ($nilai as $mkId => $huruf) {
-            $mkId = (int) $mkId;
-            if ($mkId <= 0) continue;
+        $db->transStart();
 
-            $mk = $db->table('mata_kuliah')
-                ->select('kode_mk, nama_mk, kriteria')
-                ->where('id', $mkId)->get()->getRowArray();
+        try {
+            $savedCount = 0;
             
-            if (!$mk) continue;
+            foreach ($nilai as $mkId => $huruf) {
+                $mkId = (int) $mkId;
+                if ($mkId <= 0) continue;
 
-            $huruf = strtoupper(trim((string) $huruf));
-            $angka = $mapAngka[$huruf] ?? null;
-            $desc  = $mapDesc[$huruf]  ?? 'Belum Dinilai';
+                $mk = $db->table('mata_kuliah')
+                    ->select('kode_mk, nama_mk, kriteria')
+                    ->where('id', $mkId)->get()->getRowArray();
+                
+                if (!$mk) {
+                    log_message('warning', "Mata kuliah ID {$mkId} tidak ditemukan");
+                    continue;
+                }
 
-            $existing = $db->table('nilai_mahasiswa')
-                ->where('mahasiswa_id', $mahasiswaId)
-                ->where('kode_mk', $mk['kode_mk'])
-                ->get()->getRowArray();
+                $huruf = strtoupper(trim((string) $huruf));
+                $angka = $mapAngka[$huruf] ?? null;
+                $desc  = $mapDesc[$huruf]  ?? 'Belum Dinilai';
 
-            $data = [
-                'mahasiswa_id'    => $mahasiswaId,
-                'kriteria'        => $mk['kriteria'] ?? null,
-                'kode_mk'         => $mk['kode_mk'],
-                'nama_mk'         => $mk['nama_mk'],
-                'nilai_huruf'     => $huruf,
-                'nilai_angka'     => $angka,
-                'deskripsi_nilai' => $desc,
-                'diperbarui_pada' => date('Y-m-d H:i:s'),
-            ];
+                $existing = $db->table('nilai_mahasiswa')
+                    ->where('mahasiswa_id', $mahasiswaId)
+                    ->where('kode_mk', $mk['kode_mk'])
+                    ->get()->getRowArray();
 
-            if ($existing) {
-                $db->table('nilai_mahasiswa')->where('id', $existing['id'])->update($data);
-            } else {
-                $data['dibuat_pada'] = date('Y-m-d H:i:s');
-                $db->table('nilai_mahasiswa')->insert($data);
+                $data = [
+                    'mahasiswa_id'    => $mahasiswaId,
+                    'kriteria'        => $mk['kriteria'] ?? null,
+                    'kode_mk'         => $mk['kode_mk'],
+                    'nama_mk'         => $mk['nama_mk'],
+                    'nilai_huruf'     => $huruf,
+                    'nilai_angka'     => $angka,
+                    'deskripsi_nilai' => $desc,
+                    'diperbarui_pada' => date('Y-m-d H:i:s'),
+                ];
+
+                if ($existing) {
+                    $db->table('nilai_mahasiswa')->where('id', $existing['id'])->update($data);
+                } else {
+                    $data['dibuat_pada'] = date('Y-m-d H:i:s');
+                    $db->table('nilai_mahasiswa')->insert($data);
+                }
+                
+                $savedCount++;
             }
+
+            $this->hitungNilaiKriteria($mahasiswaId, $db);
+
+            $db->transComplete();
+
+            if ($db->transStatus() === false) {
+                throw new \Exception('Transaction failed');
+            }
+
+            log_message('info', "Nilai mahasiswa ID {$mahasiswaId} berhasil disimpan ({$savedCount} records)");
+
+            return $this->response->setJSON([
+                'ok' => true,
+                'success' => true,
+                'message' => 'Nilai berhasil disimpan dan dihitung.',
+                'saved_count' => $savedCount,
+                'timestamp' => time()
+            ]);
+
+        } catch (\Exception $e) {
+            $db->transRollback();
+            
+            log_message('error', 'Error saving nilai: ' . $e->getMessage());
+            
+            return $this->response->setStatusCode(500)
+                ->setJSON([
+                    'error' => true,
+                    'message' => 'Gagal menyimpan nilai: ' . $e->getMessage()
+                ]);
         }
-
-        // ========== 2. HITUNG TOTAL PER-KRITERIA (SKALA 0-100) ==========
-        $this->hitungNilaiKriteria($mahasiswaId);
-
-        return $this->response->setJSON(['ok' => true, 'message' => 'Nilai berhasil disimpan dan dihitung.']);
     }
 
     /**
      * HITUNG NILAI TOTAL PER KRITERIA
-     * Formula: (Σ nilai_angka / (jumlah_matkul × 4)) × 100
      */
-    private function hitungNilaiKriteria($mahasiswaId)
+    private function hitungNilaiKriteria($mahasiswaId, $db = null)
     {
-        $db = Database::connect();
+        if ($db === null) {
+            $db = Database::connect();
+        }
 
-        // Ambil semua nilai mahasiswa yang sudah ada
         $nilaiData = $db->table('nilai_mahasiswa')
             ->select('kriteria, nilai_angka')
             ->where('mahasiswa_id', $mahasiswaId)
             ->where('nilai_angka IS NOT NULL')
             ->get()->getResultArray();
 
-        // Kelompokkan per kriteria
         $grouped = [];
         foreach ($nilaiData as $row) {
             $kriteria = strtolower(trim($row['kriteria']));
@@ -232,18 +279,15 @@ class Nilai extends BaseController
             $grouped[$kriteria]['count']++;
         }
 
-        // Hitung persentase untuk setiap kriteria
         foreach ($grouped as $kriteria => $data) {
             $totalMatkul = $data['count'];
             $sumNilai    = $data['sum'];
 
             if ($totalMatkul <= 0) continue;
 
-            // Formula: (Σ nilai / (jumlah_mk × 4)) × 100
             $nilaiTotal = ($sumNilai / ($totalMatkul * 4)) * 100;
             $nilaiTotal = round($nilaiTotal, 2);
 
-            // Simpan ke tabel hasil_fuzzy
             $existing = $db->table('hasil_fuzzy')
                 ->where('mahasiswa_id', $mahasiswaId)
                 ->where('kriteria', $kriteria)
@@ -263,7 +307,6 @@ class Nilai extends BaseController
                 $db->table('hasil_fuzzy')->insert($dataHF);
             }
 
-            // Log untuk debugging
             log_message('info', "Kriteria {$kriteria}: {$sumNilai} / ({$totalMatkul} × 4) × 100 = {$nilaiTotal}%");
         }
     }

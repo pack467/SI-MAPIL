@@ -40,7 +40,7 @@ class Session extends BaseConfig
      * The number of SECONDS you want the session to last.
      * Setting to 0 (zero) means expire when the browser is closed.
      */
-    public int $expiration = 7200;
+    public int $expiration = 7200; // 2 jam
 
     /**
      * --------------------------------------------------------------------------
@@ -69,7 +69,7 @@ class Session extends BaseConfig
      * WARNING: If you're using the database driver, don't forget to update
      *          your session table's PRIMARY KEY when changing this setting.
      */
-    public bool $matchIP = false;
+    public bool $matchIP = false; // UBAH JADI FALSE
 
     /**
      * --------------------------------------------------------------------------
@@ -78,7 +78,7 @@ class Session extends BaseConfig
      *
      * How many seconds between CI regenerating the session ID.
      */
-    public int $timeToUpdate = 300;
+    public int $timeToUpdate = 300; // 5 menit
 
     /**
      * --------------------------------------------------------------------------
@@ -89,7 +89,7 @@ class Session extends BaseConfig
      * when auto-regenerating the session ID. When set to FALSE, the data
      * will be later deleted by the garbage collector.
      */
-    public bool $regenerateDestroy = false;
+    public bool $regenerateDestroy = false; // UBAH JADI FALSE
 
     /**
      * --------------------------------------------------------------------------
@@ -98,7 +98,7 @@ class Session extends BaseConfig
      *
      * DB Group for the database session.
      */
-    public ?string $DBGroup = null;
+    public ?string $DBGroup = 'default';
 
     /**
      * --------------------------------------------------------------------------
@@ -110,7 +110,7 @@ class Session extends BaseConfig
      * Time (microseconds) to wait if lock cannot be acquired.
      * The default is 100,000 microseconds (= 0.1 seconds).
      */
-    public int $lockRetryInterval = 100_000;
+    public int $lockRetryInterval = 100000;
 
     /**
      * --------------------------------------------------------------------------
@@ -124,4 +124,61 @@ class Session extends BaseConfig
      * seconds.
      */
     public int $lockMaxRetries = 300;
+
+    /**
+     * --------------------------------------------------------------------------
+     * Cookie Domain
+     * --------------------------------------------------------------------------
+     *
+     * Set to `.your-domain.com` for site-wide cookies
+     *
+     * @var string
+     */
+    public string $cookieDomain = '';
+
+    /**
+     * --------------------------------------------------------------------------
+     * Cookie Path
+     * --------------------------------------------------------------------------
+     *
+     * Typically will be a forward slash
+     *
+     * @var string
+     */
+    public string $cookiePath = '/';
+
+    /**
+     * --------------------------------------------------------------------------
+     * Cookie Secure
+     * --------------------------------------------------------------------------
+     *
+     * Cookie will only be set if a secure HTTPS connection exists.
+     *
+     * @var bool
+     */
+    public bool $cookieSecure = false;
+
+    /**
+     * --------------------------------------------------------------------------
+     * Cookie SameSite
+     * --------------------------------------------------------------------------
+     *
+     * Configure cookie SameSite setting. Allowed values are:
+     * - None
+     * - Lax
+     * - Strict
+     * - ''
+     *
+     * Alternatively, you can use the constant names:
+     * - `Cookie::SAMESITE_NONE`
+     * - `Cookie::SAMESITE_LAX`
+     * - `Cookie::SAMESITE_STRICT`
+     *
+     * Defaults to `Lax` for compatibility with modern browsers. Setting `''`
+     * (empty string) means default SameSite attribute set by browsers (`Lax`)
+     * will be set on cookies. If set to `None`, `$cookieSecure` must also be set.
+     *
+     * @var string 'Lax'|'None'|'Strict'
+     */
+    public string $cookieSameSite = 'Lax';
 }

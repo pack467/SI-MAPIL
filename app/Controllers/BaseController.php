@@ -38,12 +38,6 @@ abstract class BaseController extends Controller
     protected $helpers = [];
 
     /**
-     * Be sure to declare properties for any property fetch you initialized.
-     * The creation of dynamic property is deprecated in PHP 8.2.
-     */
-    // protected $session;
-
-    /**
      * @return void
      */
     public function initController(RequestInterface $request, ResponseInterface $response, LoggerInterface $logger)
@@ -52,7 +46,39 @@ abstract class BaseController extends Controller
         parent::initController($request, $response, $logger);
 
         // Preload any models, libraries, etc, here.
-
         // E.g.: $this->session = service('session');
+        
+        // Set no-cache headers globally untuk semua response
+        $this->setGlobalNoCacheHeaders($response);
+    }
+
+    /**
+     * Set no-cache headers untuk semua response
+     * Ini mencegah browser menyimpan cache dari halaman/API
+     */
+    protected function setGlobalNoCacheHeaders(ResponseInterface $response)
+    {
+        $response->setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+        $response->setHeader('Cache-Control', 'post-check=0, pre-check=0', false);
+        $response->setHeader('Pragma', 'no-cache');
+        $response->setHeader('Expires', 'Mon, 26 Jul 1997 05:00:00 GMT');
+        $response->setHeader('Last-Modified', gmdate('D, d M Y H:i:s') . ' GMT');
+        
+        // Tambahan header untuk mencegah caching
+        $response->setHeader('X-Accel-Expires', '0');
+        
+        // Untuk AJAX requests, tambahkan header khusus
+        if ($this->request->isAJAX()) {
+            $response->setHeader('X-Requested-With', 'XMLHttpRequest');
+        }
+    }
+
+    /**
+     * Helper method untuk set no-cache headers (backward compatibility)
+     * Method ini PROTECTED agar bisa dipanggil dari child class
+     */
+    protected function setNoCacheHeaders()
+    {
+        $this->setGlobalNoCacheHeaders($this->response);
     }
 }

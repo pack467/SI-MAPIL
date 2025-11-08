@@ -26,7 +26,6 @@ CREATE TABLE mahasiswa (
     total_sks INT(3) NOT NULL DEFAULT 0,
     email VARCHAR(100) NOT NULL,
     password VARCHAR(255) NOT NULL,
-    password_hash VARCHAR(255) NULL,
     prodi VARCHAR(100) DEFAULT 'Ilmu Komputer',
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,

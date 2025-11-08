@@ -1,14 +1,15 @@
 // =====================================
 // Cek Nilai – semua data dari database
+// ENHANCED: Dengan cache-busting dan better error handling
 // =====================================
 document.addEventListener('DOMContentLoaded', () => {
   const main = document.querySelector('.main-content');
   if (!main) return;
 
   const MAHASISWA_ID = main.dataset.mahasiswaId;
-  const API_DETAIL   = main.dataset.apiDetail;   // GET ?mahasiswa_id=
-  const API_MATKUL   = main.dataset.apiMatkul;   // (opsional) GET ?mahasiswa_id=
-  const API_SIMPAN   = main.dataset.apiSimpan;   // POST
+  const API_DETAIL   = main.dataset.apiDetail;
+  const API_MATKUL   = main.dataset.apiMatkul;
+  const API_SIMPAN   = main.dataset.apiSimpan;
 
   const mapHuruf = {
     'A': { cls: 'grade-a', desc: 'Sangat Baik', angka: 4 },
@@ -19,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
     '-': { cls: 'grade-none', desc: 'Belum Dinilai', angka: null },
   };
 
-  // Urutan mata kuliah per kriteria (sesuai permintaan)
+  // Urutan mata kuliah per kriteria
   const urutanMatkul = {
     'Robotika': [
       'Jaringan Komputer',
@@ -72,14 +73,31 @@ document.addEventListener('DOMContentLoaded', () => {
   // Load identitas + nilai + matkul
   init();
 
+  /**
+   * Initialize page - Fetch data dengan cache busting
+   */
   async function init() {
     try {
-      const res = await fetch(`${API_DETAIL}?mahasiswa_id=${encodeURIComponent(MAHASISWA_ID)}`, {
-        headers: { 'Accept': 'application/json' }
+      // Tambahkan timestamp untuk cache busting
+      const cacheBuster = `_=${Date.now()}`;
+      const url = `${API_DETAIL}?mahasiswa_id=${encodeURIComponent(MAHASISWA_ID)}&${cacheBuster}`;
+      
+      const res = await fetch(url, {
+        method: 'GET',
+        headers: { 
+          'Accept': 'application/json',
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0'
+        },
+        cache: 'no-store' // Force no cache
       });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+      }
+      
       const ident = await res.json();
-      // ident: { id,nama,nim,semester, nilaiByMatkul:{mkId:{huruf,angka,ket}}, matkulByKriteria:{Robotika:[...],...} }
 
       // Header
       setText('student-name', ident.nama);
@@ -115,7 +133,6 @@ document.addEventListener('DOMContentLoaded', () => {
               const val   = (ident.nilaiByMatkul || {})[mk.id] || {};
               const huruf = (val.huruf || '-').toUpperCase();
               const meta  = mapHuruf[huruf] || mapHuruf['-'];
-              // Pakai deskripsi dari DB (val.ket) kalau tersedia, else fallback meta.desc
               const desc  = (val.ket && String(val.ket).trim().length) ? val.ket : meta.desc;
               return `
                 <div class="course-item">
@@ -133,13 +150,11 @@ document.addEventListener('DOMContentLoaded', () => {
       for (const [kriteria, list] of Object.entries(ident.matkulByKriteria || {})) {
         const kriteriaLower = kriteria.toLowerCase();
         
-        // Untuk kriteria Umum, kelompokkan per semester
         if (kriteriaLower === 'umum') {
           renderUmumFormBySemester(list, ident.nilaiByMatkul);
           continue;
         }
         
-        // Urutkan mata kuliah sesuai urutan yang ditentukan
         const sortedList = sortMatkul(list, kriteria);
         
         const block = document.createElement('div');
@@ -182,19 +197,53 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
 
+      // Form submit dengan better error handling
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
+        
         if (!confirm('Simpan perubahan nilai?')) return;
-        const fd = new FormData(form);
-        const res = await fetch(API_SIMPAN, { method: 'POST', body: fd });
-        const ok  = res.ok;
-        alert(ok ? 'Nilai berhasil disimpan' : 'Gagal menyimpan nilai');
-        if (ok) location.reload();
+        
+        const submitBtn = form.querySelector('.btn-save');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+        
+        try {
+          const fd = new FormData(form);
+          
+          const res = await fetch(API_SIMPAN, { 
+            method: 'POST', 
+            body: fd,
+            headers: {
+              'Cache-Control': 'no-cache, no-store, must-revalidate',
+              'Pragma': 'no-cache'
+            },
+            cache: 'no-store'
+          });
+          
+          const data = await res.json().catch(() => ({}));
+          
+          if (!res.ok) {
+            throw new Error(data.message || 'Gagal menyimpan nilai');
+          }
+          
+          alert('Nilai berhasil disimpan!');
+          
+          // Reload dengan cache bust
+          location.href = location.href.split('?')[0] + '?_=' + Date.now();
+          
+        } catch (err) {
+          console.error('Error saving:', err);
+          alert('Gagal menyimpan nilai: ' + err.message);
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = '<i class="fas fa-save"></i> Simpan Nilai';
+        }
       });
 
     } catch (err) {
       console.error('Gagal memuat detail nilai:', err);
-      viewWrap.innerHTML = '<p style="padding:12px;text-align:center">Gagal memuat data.</p>';
+      viewWrap.innerHTML = `<p style="padding:12px;text-align:center;color:#c62828">
+        <i class="fas fa-exclamation-triangle"></i> Gagal memuat data: ${err.message}
+      </p>`;
     }
   }
 
@@ -204,9 +253,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (el) el.textContent = (txt ?? '-');
   }
 
-  // Fungsi untuk render kriteria Umum berdasarkan semester (VIEW)
   function renderUmumBySemester(list, nilaiByMatkul) {
-    // Kelompokkan berdasarkan semester
     const bySemester = {};
     for (let sem = 1; sem <= 8; sem++) {
       bySemester[sem] = list.filter(mk => mk.semester === sem);
@@ -245,9 +292,7 @@ document.addEventListener('DOMContentLoaded', () => {
     viewWrap.appendChild(card);
   }
 
-  // Fungsi untuk render kriteria Umum berdasarkan semester (FORM)
   function renderUmumFormBySemester(list, nilaiByMatkul) {
-    // Kelompokkan berdasarkan semester
     const bySemester = {};
     for (let sem = 1; sem <= 8; sem++) {
       bySemester[sem] = list.filter(mk => mk.semester === sem);
@@ -287,37 +332,28 @@ document.addEventListener('DOMContentLoaded', () => {
     form.appendChild(card);
   }
 
-  // Fungsi untuk mengurutkan mata kuliah sesuai urutan yang ditentukan
   function sortMatkul(list, kriteria) {
     if (!urutanMatkul[kriteria]) return list;
     
     const urutan = urutanMatkul[kriteria];
     const sorted = [];
     
-    // Tambahkan mata kuliah sesuai urutan yang ditentukan
     for (const namaMK of urutan) {
       const found = list.find(mk => {
         const mkNama = mk.nama.toLowerCase().trim();
         const targetNama = namaMK.toLowerCase().trim();
-        // Cek exact match atau contains
         return mkNama === targetNama || mkNama.includes(targetNama) || targetNama.includes(mkNama);
       });
-      if (found) {
-        sorted.push(found);
-      }
+      if (found) sorted.push(found);
     }
     
-    // Tambahkan sisa mata kuliah yang tidak ada di urutan
     for (const mk of list) {
-      if (!sorted.find(s => s.id === mk.id)) {
-        sorted.push(mk);
-      }
+      if (!sorted.find(s => s.id === mk.id)) sorted.push(mk);
     }
     
     return sorted;
   }
 
-  // Ikon case-insensitive; default Analisis/chart-line
   function iconFor(k) {
     const key = String(k || '').toLowerCase();
     if (key === 'robotika')     return '<i class="fas fa-robot"></i>';
@@ -329,12 +365,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function optionLabel(h) {
     const map = {
-      A: 'A : Sangat Baik',
-      B: 'B : Baik',
-      C: 'C : Cukup',
-      D: 'D : Kurang',
-      E: 'E : Gagal',
-      '-': '- : Belum Dinilai'
+      A: 'A : Sangat Baik', B: 'B : Baik', C: 'C : Cukup',
+      D: 'D : Kurang', E: 'E : Gagal', '-': '- : Belum Dinilai'
     };
     return map[h] || h;
   }

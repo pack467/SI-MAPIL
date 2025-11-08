@@ -9,7 +9,8 @@ class Fuzzy extends BaseController
     /**
      * POST /admin/fuzzy/hitung
      * Menghitung kecocokan mata kuliah peminatan menggunakan Fuzzy Tsukamoto
-     * dengan 81 rules untuk semester 5-6 dan 81 rules untuk semester 7+
+     * dengan 27 rules untuk semester 5-6 dan 27 rules untuk semester 7+
+     * OUTPUT: Hanya 3 kategori (Kurang Cocok, Cukup Cocok, Sangat Cocok)
      */
     public function hitung()
     {
@@ -100,16 +101,16 @@ class Fuzzy extends BaseController
         ];
 
         // ============================================
-        // STEP 2: EVALUASI 81 RULES SECARA OTOMATIS
+        // STEP 2: EVALUASI 27 RULES SECARA OTOMATIS
         // ============================================
         $semester = (int)($mhs['semester'] ?? 0);
         $allRules = [];
 
         if ($semester <= 6) {
-            // ===== SEMESTER 5-6: 81 RULES OTOMATIS =====
+            // ===== SEMESTER 5-6: 27 RULES OTOMATIS =====
             $allRules = $this->generateAllRulesSemester56($mu);
         } else {
-            // ===== SEMESTER 7+: 81 RULES OTOMATIS =====
+            // ===== SEMESTER 7+: 27 RULES OTOMATIS =====
             $allRules = $this->generateAllRulesSemester7Plus($mu);
         }
 
@@ -247,8 +248,8 @@ class Fuzzy extends BaseController
     }
 
     /**
-     * GENERATE 81 RULES UNTUK SEMESTER 5-6 (JST & MIKROKONTROLER)
-     * Menghasilkan semua kombinasi: 3^4 = 81 rules dengan prioritas yang tepat
+     * GENERATE 27 RULES UNTUK SEMESTER 5-6 (JST & MIKROKONTROLER)
+     * Hanya 3 output kategori: Kurang Cocok, Cukup Cocok, Sangat Cocok
      */
     private function generateAllRulesSemester56(array $mu): array
     {
@@ -274,10 +275,10 @@ class Fuzzy extends BaseController
                             continue;
                         }
                         
-                        // Tentukan output berdasarkan prioritas
+                        // Tentukan output berdasarkan prioritas (HANYA 3 KATEGORI)
                         list($jstLabel, $mikoLabel) = $this->determineOutputSem56($rob, $mat, $prog, $anal);
                         
-                        // Gunakan metode inversi Tsukamoto yang benar
+                        // Gunakan metode inversi Tsukamoto dengan 3 kategori
                         $z_jst = $this->inferTsukamoto($jstLabel, $alpha);
                         $z_miko = $this->inferTsukamoto($mikoLabel, $alpha);
                         
@@ -316,8 +317,8 @@ class Fuzzy extends BaseController
     }
 
     /**
-     * GENERATE 81 RULES UNTUK SEMESTER 7+ (MACHINE LEARNING & LOGIKA FUZZY)
-     * Menghasilkan semua kombinasi: 3^4 = 81 rules dengan prioritas yang tepat
+     * GENERATE 27 RULES UNTUK SEMESTER 7+ (MACHINE LEARNING & LOGIKA FUZZY)
+     * Hanya 3 output kategori: Kurang Cocok, Cukup Cocok, Sangat Cocok
      */
     private function generateAllRulesSemester7Plus(array $mu): array
     {
@@ -343,10 +344,10 @@ class Fuzzy extends BaseController
                             continue;
                         }
                         
-                        // Tentukan output berdasarkan prioritas
+                        // Tentukan output berdasarkan prioritas (HANYA 3 KATEGORI)
                         list($mlLabel, $lfLabel) = $this->determineOutputSem7Plus($rob, $mat, $prog, $anal);
                         
-                        // Gunakan metode inversi Tsukamoto yang benar
+                        // Gunakan metode inversi Tsukamoto dengan 3 kategori
                         $z_ml = $this->inferTsukamoto($mlLabel, $alpha);
                         $z_lf = $this->inferTsukamoto($lfLabel, $alpha);
                         
@@ -386,8 +387,7 @@ class Fuzzy extends BaseController
 
     /**
      * Tentukan output untuk semester 5-6 berdasarkan kombinasi input
-     * JST: Pemrograman (40%) > Matematika (30%) > Analisis (20%) > Robotika (10%)
-     * Mikrokontroler: Robotika (40%) > Analisis (30%) > Pemrograman (20%) > Matematika (10%)
+     * HANYA 3 KATEGORI OUTPUT: Kurang Cocok, Cukup Cocok, Sangat Cocok
      */
     private function determineOutputSem56($rob, $mat, $prog, $anal): array
     {
@@ -407,8 +407,7 @@ class Fuzzy extends BaseController
 
     /**
      * Tentukan output untuk semester 7+ berdasarkan kombinasi input
-     * ML: Matematika (40%) > Analisis (30%) > Pemrograman (20%) > Robotika (10%)
-     * Logika Fuzzy: Analisis (40%) > Matematika (30%) > Robotika (20%) > Pemrograman (10%)
+     * HANYA 3 KATEGORI OUTPUT: Kurang Cocok, Cukup Cocok, Sangat Cocok
      */
     private function determineOutputSem7Plus($rob, $mat, $prog, $anal): array
     {
@@ -440,68 +439,47 @@ class Fuzzy extends BaseController
     }
 
     /**
-     * Convert score ke label output (4 kategori)
+     * Convert score ke label output (HANYA 3 KATEGORI)
+     * Threshold disesuaikan untuk distribusi yang lebih seimbang
      */
     private function scoreToLabel($score): string
     {
-        if ($score >= 2.5) return 'Sangat Cocok';
-        if ($score >= 2.0) return 'Cocok';
-        if ($score >= 1.5) return 'Cukup Cocok';
-        return 'Kurang Cocok';
+        if ($score >= 2.34) return 'Sangat Cocok';  // Kuat (score 2.34-3.0)
+        if ($score >= 1.67) return 'Cukup Cocok';   // Lumayan (score 1.67-2.33)
+        return 'Kurang Cocok';                       // Lemah (score 1.0-1.66)
     }
 
     /**
-     * METODE INVERSI TSUKAMOTO - FUNGSI KEANGGOTAAN MONOTON
+     * METODE INVERSI TSUKAMOTO - HANYA 3 KATEGORI OUTPUT
      * 
-     * Rumus Inversi Fungsi Keanggotaan:
-     * - Fungsi Naik: Z = y_min + α(y_max - y_min)
-     * - Fungsi Turun: Z = y_max - α(y_max - y_min)
-     * 
-     * Parameter berdasarkan spesifikasi yang telah diperbaiki:
+     * Fungsi keanggotaan monoton untuk 3 kategori:
      * 1) Kurang Cocok: fungsi turun [40, 0] → range [0-40]
      * 2) Cukup Cocok: fungsi naik [30, 70] → range [30-70]
-     * 3) Cocok: fungsi naik [50, 90] → range [50-90]
-     * 4) Sangat Cocok: fungsi naik [70, 100] → range [70-100]
+     * 3) Sangat Cocok: fungsi naik [60, 100] → range [60-100]
      */
     private function inferTsukamoto($label, $alpha): array
     {
         switch ($label) {
             case 'Kurang Cocok':
                 // Fungsi TURUN: Z = y_max - α(y_max - y_min)
-                // Range [0, 40], semakin tinggi α, semakin rendah Z
                 $y_min = 0.0;
                 $y_max = 40.0;
-                $y_pusat = 20.0;
                 $z = $y_max - ($alpha * ($y_max - $y_min));
                 $formula = "{$this->fmt($y_max)} - ({$this->fmt($alpha)} × ({$this->fmt($y_max)} - {$this->fmt($y_min)}))";
                 break;
                 
             case 'Cukup Cocok':
                 // Fungsi NAIK: Z = y_min + α(y_max - y_min)
-                // Range [30, 70], semakin tinggi α, semakin tinggi Z
                 $y_min = 30.0;
                 $y_max = 70.0;
-                $y_pusat = 50.0;
-                $z = $y_min + ($alpha * ($y_max - $y_min));
-                $formula = "{$this->fmt($y_min)} + ({$this->fmt($alpha)} × ({$this->fmt($y_max)} - {$this->fmt($y_min)}))";
-                break;
-                
-            case 'Cocok':
-                // Fungsi NAIK: Z = y_min + α(y_max - y_min)
-                // Range [50, 90], semakin tinggi α, semakin tinggi Z
-                $y_min = 50.0;
-                $y_max = 90.0;
-                $y_pusat = 70.0;
                 $z = $y_min + ($alpha * ($y_max - $y_min));
                 $formula = "{$this->fmt($y_min)} + ({$this->fmt($alpha)} × ({$this->fmt($y_max)} - {$this->fmt($y_min)}))";
                 break;
                 
             case 'Sangat Cocok':
                 // Fungsi NAIK: Z = y_min + α(y_max - y_min)
-                // Range [70, 100], semakin tinggi α, semakin tinggi Z
-                $y_min = 70.0;
+                $y_min = 60.0;
                 $y_max = 100.0;
-                $y_pusat = 85.0;
                 $z = $y_min + ($alpha * ($y_max - $y_min));
                 $formula = "{$this->fmt($y_min)} + ({$this->fmt($alpha)} × ({$this->fmt($y_max)} - {$this->fmt($y_min)}))";
                 break;
@@ -510,7 +488,6 @@ class Fuzzy extends BaseController
                 // Default ke Kurang Cocok
                 $y_min = 0.0;
                 $y_max = 40.0;
-                $y_pusat = 20.0;
                 $z = $y_max - ($alpha * ($y_max - $y_min));
                 $formula = "{$this->fmt($y_max)} - ({$this->fmt($alpha)} × ({$this->fmt($y_max)} - {$this->fmt($y_min)}))";
                 break;
@@ -520,8 +497,7 @@ class Fuzzy extends BaseController
             'z' => $z,
             'formula' => $formula,
             'y_min' => $y_min,
-            'y_max' => $y_max,
-            'y_pusat' => $y_pusat
+            'y_max' => $y_max
         ];
     }
 
@@ -539,13 +515,12 @@ class Fuzzy extends BaseController
     }
 
     /**
-     * Get CSS class for output label
+     * Get CSS class for output label (HANYA 3 KATEGORI)
      */
     private function getOutputClass($label): string
     {
         return match($label) {
             'Sangat Cocok' => 'high',
-            'Cocok' => 'medium-high',
             'Cukup Cocok' => 'medium',
             'Kurang Cocok' => 'low',
             default => 'low'
@@ -569,10 +544,6 @@ class Fuzzy extends BaseController
 
     /**
      * Fungsi keanggotaan trapesium
-     * Parameter: [a, b, c, d]
-     * - [a, b]: sisi naik
-     * - [b, c]: puncak (μ = 1)
-     * - [c, d]: sisi turun
      */
     private function trap(float $x, float $a, float $b, float $c, float $d): float
     {

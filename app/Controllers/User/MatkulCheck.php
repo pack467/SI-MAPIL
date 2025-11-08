@@ -52,6 +52,7 @@ class MatkulCheck extends BaseController
     /**
      * POST /user/matkul-check/hitung
      * Menghitung kecocokan mata kuliah peminatan menggunakan Fuzzy Tsukamoto
+     * OUTPUT: Hanya 3 kategori (Kurang Cocok, Cukup Cocok, Sangat Cocok)
      */
     public function hitung()
     {
@@ -486,6 +487,7 @@ class MatkulCheck extends BaseController
 
     /**
      * Generate semua 81 rules untuk Semester 5-6
+     * HANYA 3 KATEGORI OUTPUT: Kurang Cocok, Cukup Cocok, Sangat Cocok
      */
     private function generateAllRulesSemester56(array $mu): array
     {
@@ -509,8 +511,10 @@ class MatkulCheck extends BaseController
                             continue;
                         }
                         
+                        // Tentukan output (HANYA 3 KATEGORI)
                         list($jstLabel, $mikoLabel) = $this->determineOutputSem56($rob, $mat, $prog, $anal);
                         
+                        // Inversi Tsukamoto (HANYA 3 KATEGORI)
                         $z_jst = $this->inferTsukamoto($jstLabel, $alpha);
                         $z_miko = $this->inferTsukamoto($mikoLabel, $alpha);
                         
@@ -550,6 +554,7 @@ class MatkulCheck extends BaseController
 
     /**
      * Generate semua 81 rules untuk Semester 7+
+     * HANYA 3 KATEGORI OUTPUT: Kurang Cocok, Cukup Cocok, Sangat Cocok
      */
     private function generateAllRulesSemester7Plus(array $mu): array
     {
@@ -573,8 +578,10 @@ class MatkulCheck extends BaseController
                             continue;
                         }
                         
+                        // Tentukan output (HANYA 3 KATEGORI)
                         list($mlLabel, $lfLabel) = $this->determineOutputSem7Plus($rob, $mat, $prog, $anal);
                         
+                        // Inversi Tsukamoto (HANYA 3 KATEGORI)
                         $z_ml = $this->inferTsukamoto($mlLabel, $alpha);
                         $z_lf = $this->inferTsukamoto($lfLabel, $alpha);
                         
@@ -614,6 +621,7 @@ class MatkulCheck extends BaseController
 
     /**
      * Menentukan output label untuk Semester 5-6
+     * HANYA 3 KATEGORI: Kurang Cocok, Cukup Cocok, Sangat Cocok
      */
     private function determineOutputSem56($rob, $mat, $prog, $anal): array
     {
@@ -633,6 +641,7 @@ class MatkulCheck extends BaseController
 
     /**
      * Menentukan output label untuk Semester 7+
+     * HANYA 3 KATEGORI: Kurang Cocok, Cukup Cocok, Sangat Cocok
      */
     private function determineOutputSem7Plus($rob, $mat, $prog, $anal): array
     {
@@ -664,74 +673,55 @@ class MatkulCheck extends BaseController
     }
 
     /**
-     * Konversi skor ke label output
+     * Konversi skor ke label output (HANYA 3 KATEGORI)
+     * Threshold disesuaikan untuk distribusi yang lebih seimbang
      */
     private function scoreToLabel($score): string
     {
-        if ($score >= 2.5) return 'Sangat Cocok';
-        if ($score >= 2.0) return 'Cocok';
-        if ($score >= 1.5) return 'Cukup Cocok';
-        return 'Kurang Cocok';
+        if ($score >= 2.34) return 'Sangat Cocok';  // Kuat (score 2.34-3.0)
+        if ($score >= 1.67) return 'Cukup Cocok';   // Lumayan (score 1.67-2.33)
+        return 'Kurang Cocok';                       // Lemah (score 1.0-1.66)
     }
 
     /**
-     * METODE INVERSI TSUKAMOTO - FUNGSI KEANGGOTAAN MONOTON
+     * METODE INVERSI TSUKAMOTO - HANYA 3 KATEGORI OUTPUT
      * 
-     * Rumus: Z = y_pusat + α(y_max - y_min)
-     * 
-     * Parameter berdasarkan spesifikasi:
-     * 1) Kurang Cocok: fungsi turun [40, 0] → y_pusat=20, range=40
-     * 2) Cukup Cocok: fungsi naik [30, 70] → y_pusat=50, range=40
-     * 3) Cocok: fungsi naik [50, 90] → y_pusat=70, range=40
-     * 4) Sangat Cocok: fungsi naik [70, 100] → y_pusat=85, range=30
+     * Fungsi keanggotaan monoton untuk 3 kategori:
+     * 1) Kurang Cocok: fungsi turun [40, 0] → range [0-40]
+     * 2) Cukup Cocok: fungsi naik [30, 70] → range [30-70]
+     * 3) Sangat Cocok: fungsi naik [60, 100] → range [60-100]
      */
     private function inferTsukamoto($label, $alpha): array
     {
         switch ($label) {
             case 'Kurang Cocok':
-                // Fungsi turun: Z = y_max - α(y_max - y_min)
-                // Range [0, 40], pusat di 20
+                // Fungsi TURUN: Z = y_max - α(y_max - y_min)
                 $y_min = 0.0;
                 $y_max = 40.0;
-                $y_pusat = 20.0;
                 $z = $y_max - ($alpha * ($y_max - $y_min));
                 $formula = "{$this->fmt($y_max)} - ({$this->fmt($alpha)} × ({$this->fmt($y_max)} - {$this->fmt($y_min)}))";
                 break;
                 
             case 'Cukup Cocok':
-                // Fungsi naik: Z = y_min + α(y_max - y_min)
-                // Range [30, 70], pusat di 50
+                // Fungsi NAIK: Z = y_min + α(y_max - y_min)
                 $y_min = 30.0;
                 $y_max = 70.0;
-                $y_pusat = 50.0;
-                $z = $y_min + ($alpha * ($y_max - $y_min));
-                $formula = "{$this->fmt($y_min)} + ({$this->fmt($alpha)} × ({$this->fmt($y_max)} - {$this->fmt($y_min)}))";
-                break;
-                
-            case 'Cocok':
-                // Fungsi naik: Z = y_min + α(y_max - y_min)
-                // Range [50, 90], pusat di 70
-                $y_min = 50.0;
-                $y_max = 90.0;
-                $y_pusat = 70.0;
                 $z = $y_min + ($alpha * ($y_max - $y_min));
                 $formula = "{$this->fmt($y_min)} + ({$this->fmt($alpha)} × ({$this->fmt($y_max)} - {$this->fmt($y_min)}))";
                 break;
                 
             case 'Sangat Cocok':
-                // Fungsi naik: Z = y_min + α(y_max - y_min)
-                // Range [70, 100], pusat di 85
-                $y_min = 70.0;
+                // Fungsi NAIK: Z = y_min + α(y_max - y_min)
+                $y_min = 60.0;
                 $y_max = 100.0;
-                $y_pusat = 85.0;
                 $z = $y_min + ($alpha * ($y_max - $y_min));
                 $formula = "{$this->fmt($y_min)} + ({$this->fmt($alpha)} × ({$this->fmt($y_max)} - {$this->fmt($y_min)}))";
                 break;
                 
             default:
+                // Default ke Kurang Cocok
                 $y_min = 0.0;
                 $y_max = 40.0;
-                $y_pusat = 20.0;
                 $z = $y_max - ($alpha * ($y_max - $y_min));
                 $formula = "{$this->fmt($y_max)} - ({$this->fmt($alpha)} × ({$this->fmt($y_max)} - {$this->fmt($y_min)}))";
                 break;
@@ -741,8 +731,7 @@ class MatkulCheck extends BaseController
             'z' => $z,
             'formula' => $formula,
             'y_min' => $y_min,
-            'y_max' => $y_max,
-            'y_pusat' => $y_pusat
+            'y_max' => $y_max
         ];
     }
 
@@ -760,13 +749,12 @@ class MatkulCheck extends BaseController
     }
 
     /**
-     * Helper: CSS class untuk output label
+     * Helper: CSS class untuk output label (HANYA 3 KATEGORI)
      */
     private function getOutputClass($label): string
     {
         return match($label) {
             'Sangat Cocok' => 'high',
-            'Cocok' => 'medium-high',
             'Cukup Cocok' => 'medium',
             'Kurang Cocok' => 'low',
             default => 'low'

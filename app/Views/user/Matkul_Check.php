@@ -19,7 +19,7 @@ $this->setVar('activeMenu', 'matkul-check');
     <button class="sidebar-toggle" id="sidebarToggle">
       <i class="fas fa-bars"></i>
     </button>
-    <h1>Beranda</h1>
+    <h1>Cek Mata Kuliah Pilihan</h1>
   </div>
   <div class="user-info">
     <div class="user-avatar">

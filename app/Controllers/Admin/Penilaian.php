@@ -56,6 +56,7 @@ class Penilaian extends BaseController
     /**
      * API: GET /admin/penilaian/data
      * Menampilkan HP Bar berdasarkan hasil_fuzzy
+     * DIURUTKAN dari nilai tertinggi ke terendah
      */
     public function data()
     {
@@ -67,7 +68,6 @@ class Penilaian extends BaseController
             // Parameter
             $page    = max(1, (int) ($this->request->getGet('page') ?? 1));
             $perPage = max(1, (int) ($this->request->getGet('per_page') ?? 5));
-            $offset  = ($page - 1) * $perPage;
             $q       = trim((string) ($this->request->getGet('q') ?? ''));
 
             // Query mahasiswa
@@ -80,21 +80,16 @@ class Penilaian extends BaseController
                 ->groupEnd();
             }
 
-            // Total
-            $total = $builder->countAllResults(false);
-
-            // Ambil data mahasiswa
-            $mahasiswa = $builder
+            // Ambil SEMUA data mahasiswa yang match filter (untuk sorting)
+            $allMahasiswa = $builder
                 ->select('id, nama, nim')
-                ->orderBy('nama', 'ASC')
-                ->limit($perPage, $offset)
                 ->get()
                 ->getResultArray();
 
-            // Untuk setiap mahasiswa, ambil nilai dari hasil_fuzzy
+            // Untuk setiap mahasiswa, ambil nilai dari hasil_fuzzy dan hitung rata-rata
             $rows = [];
             
-            foreach ($mahasiswa as $mhs) {
+            foreach ($allMahasiswa as $mhs) {
                 $mhsId = (int) $mhs['id'];
                 
                 // Default nilai 0
@@ -123,6 +118,10 @@ class Penilaian extends BaseController
                     }
                 }
 
+                // Hitung rata-rata nilai untuk sorting
+                $rataRata = ($nilai['robotika'] + $nilai['matematika'] + 
+                            $nilai['pemrograman'] + $nilai['analisis']) / 4;
+
                 $rows[] = [
                     'id'          => $mhsId,
                     'nama'        => $mhs['nama'],
@@ -131,7 +130,25 @@ class Penilaian extends BaseController
                     'matematika'  => $nilai['matematika'],
                     'pemrograman' => $nilai['pemrograman'],
                     'analisis'    => $nilai['analisis'],
+                    'rata_rata'   => round($rataRata, 2), // untuk sorting
                 ];
+            }
+
+            // URUTKAN dari nilai tertinggi ke terendah
+            usort($rows, function($a, $b) {
+                return $b['rata_rata'] <=> $a['rata_rata'];
+            });
+
+            // Total records
+            $total = count($rows);
+
+            // Pagination setelah sorting
+            $offset = ($page - 1) * $perPage;
+            $paginatedRows = array_slice($rows, $offset, $perPage);
+
+            // Hapus field rata_rata dari output (tidak perlu di frontend)
+            foreach ($paginatedRows as &$row) {
+                unset($row['rata_rata']);
             }
 
             return $this->response->setJSON([
@@ -139,7 +156,7 @@ class Penilaian extends BaseController
                 'per_page'   => $perPage,
                 'total'      => $total,
                 'total_page' => (int) ceil($total / max(1, $perPage)),
-                'data'       => $rows,
+                'data'       => $paginatedRows,
             ]);
 
         } catch (\Exception $e) {
